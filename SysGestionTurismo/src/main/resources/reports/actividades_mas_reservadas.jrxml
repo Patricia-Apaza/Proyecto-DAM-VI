@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+                                  http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="actividades_mas_reservadas"
+              pageWidth="595"
+              pageHeight="842"
+              columnWidth="555"
+              leftMargin="20"
+              rightMargin="20"
+              topMargin="20"
+              bottomMargin="20"
+              uuid="b2e05a56-cd15-4c8f-a236-eaa1c4b3957f">
+
+    <!-- Campos del DTO -->
+    <field name="nombreActividad" class="java.lang.String"/>
+    <field name="numeroReservas" class="java.lang.Long"/>
+    <field name="fechaUltimaReserva" class="java.lang.String"/>
+    <field name="categoriaActividad" class="java.lang.String"/>
+
+    <!-- Título del reporte -->
+    <title>
+        <band height="50">
+            <staticText>
+                <reportElement x="0" y="0" width="555" height="30" uuid="f134c90b-9d29-4fa9-b130-64e1eb02ae2e"/>
+                <textElement textAlignment="Center">
+                    <font size="18" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Actividades Más Reservadas]]></text>
+            </staticText>
+        </band>
+    </title>
+
+    <!-- Cabecera de columnas -->
+    <columnHeader>
+        <band height="25">
+            <staticText>
+                <reportElement x="0" y="0" width="150" height="25" uuid="e2a541b4-83f9-4c9b-816f-5a94fa5d4bc4"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Actividad]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="150" y="0" width="120" height="25" uuid="cceefaa9-9ad2-421a-a0b6-2db1a7d5f5b6"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Reservas]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="270" y="0" width="135" height="25" uuid="c539ab33-1458-4f49-b4c2-dfe6f8dcbfc7"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Categoría]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="405" y="0" width="150" height="25" uuid="d946bf27-9dc2-49e7-a42c-53884b7a6c32"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Última Reserva]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+
+    <!-- Detalle de cada fila -->
+    <detail>
+        <band height="20">
+            <textField>
+                <reportElement x="0" y="0" width="150" height="20" uuid="fe25f132-e020-48d2-a5cc-693b0988b6ef"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA[$F{nombreActividad}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="150" y="0" width="120" height="20" uuid="2e4521c0-f826-4a50-b376-79abcb3ae456"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA[$F{numeroReservas}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="270" y="0" width="135" height="20" uuid="1dbde14e-d5d2-4b7b-97a2-fc8e2285fc1f"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA[$F{categoriaActividad}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="405" y="0" width="150" height="20" uuid="3c1aaaf7-2f32-4230-bc8d-59cf1c3002c0"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA[$F{fechaUltimaReserva}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+
+</jasperReport>

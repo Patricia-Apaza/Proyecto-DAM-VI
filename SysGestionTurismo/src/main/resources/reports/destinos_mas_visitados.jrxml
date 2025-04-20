@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+                                  http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="destinosMasVisitadosReport"
+              pageWidth="595"
+              pageHeight="842"
+              columnWidth="555"
+              leftMargin="20"
+              rightMargin="20"
+              topMargin="20"
+              bottomMargin="20">
+
+    <!-- Parámetros -->
+    <parameter name="destinosMasVisitados" class="java.util.List"/>
+
+    <!-- Fields -->
+    <field name="nombreDestino" class="java.lang.String"/>
+    <field name="numeroVisitas" class="java.lang.Long"/>
+    <field name="fechaUltimaVisita" class="java.lang.String"/>
+    <field name="categoriaDestino" class="java.lang.String"/>
+
+    <!-- Título del reporte -->
+    <title>
+        <band height="50">
+            <staticText value="Destinos Más Visitados"/>
+        </band>
+    </title>
+
+    <!-- Encabezado de columna -->
+    <columnHeader>
+        <band height="30">
+            <staticText value="Destino"/>
+            <staticText value="Número de Visitas"/>
+            <staticText value="Fecha Última Visita"/>
+            <staticText value="Categoría"/>
+        </band>
+    </columnHeader>
+
+    <!-- Detalles del reporte -->
+    <detail>
+        <band height="20">
+            <textField expression="$F{nombreDestino}"/>
+            <textField expression="$F{numeroVisitas}"/>
+            <textField expression="$F{fechaUltimaVisita}"/>
+            <textField expression="$F{categoriaDestino}"/>
+        </band>
+    </detail>
+
+    <!-- Pie de página -->
+    <pageFooter>
+        <band height="30">
+            <staticText value="Página"/>
+            <textField expression="$V{PAGE_NUMBER}"/>
+        </band>
+    </pageFooter>
+</jasperReport>

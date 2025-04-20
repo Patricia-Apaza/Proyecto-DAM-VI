@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+                                  http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="paquetesMasSolicitadosReport"
+              pageWidth="595"
+              pageHeight="842"
+              columnWidth="555"
+              leftMargin="20"
+              rightMargin="20"
+              topMargin="20"
+              bottomMargin="20">
+
+    <!-- Parámetros -->
+    <parameter name="paquetesMasSolicitados" class="java.util.List"/>
+
+    <!-- Fields -->
+    <field name="nombrePaquete" class="java.lang.String"/>
+    <field name="numeroSolicitudes" class="java.lang.Long"/>
+    <field name="fechaUltimaSolicitud" class="java.lang.String"/>
+    <field name="duracionPaquete" class="java.lang.String"/>
+
+    <!-- Título del reporte -->
+    <title>
+        <band height="50">
+            <staticText value="Paquetes Más Solicitados"/>
+        </band>
+    </title>
+
+    <!-- Encabezado de columna -->
+    <columnHeader>
+        <band height="30">
+            <staticText value="Paquete"/>
+            <staticText value="Número de Solicitudes"/>
+            <staticText value="Fecha Última Solicitud"/>
+            <staticText value="Duración"/>
+        </band>
+    </columnHeader>
+
+    <!-- Detalles del reporte -->
+    <detail>
+        <band height="20">
+            <textField expression="$F{nombrePaquete}"/>
+            <textField expression="$F{numeroSolicitudes}"/>
+            <textField expression="$F{fechaUltimaSolicitud}"/>
+            <textField expression="$F{duracionPaquete}"/>
+        </band>
+    </detail>
+
+    <!-- Pie de página -->
+    <pageFooter>
+        <band height="30">
+            <staticText value="Página"/>
+            <textField expression="$V{PAGE_NUMBER}"/>
+        </band>
+    </pageFooter>
+</jasperReport>
