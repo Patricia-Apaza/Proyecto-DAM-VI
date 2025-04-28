@@ -123,5 +123,5 @@ En el cual contiene:
 
 Puedes ver los prototipos de la aplicación móvil en Figma:  
 - [Prototipo en Figma (vista)](https://www.figma.com/proto/eDt0JbWJj7ZaogjJwLUsn8/YakuApp?node-id=0-1&t=ROPQ0LbkbiRLvQBC-1)
-- [Prototipo en Figma (prototipo)]([https://www.figma.com/proto/eDt0JbWJj7ZaogjJwLUsn8/YakuApp?node-id=5-78&t=Rsz1wmt13XAkuOyC-1&starting-point-node-id=3%3A51](https://www.figma.com/design/eDt0JbWJj7ZaogjJwLUsn8/YakuApp?node-id=0-1&p=f&t=EhGLq4XerHR7feVn-0))
+- [Prototipo en Figma (prototipo)]([[https://www.figma.com/proto/eDt0JbWJj7ZaogjJwLUsn8/YakuApp?node-id=5-78&t=Rsz1wmt13XAkuOyC-1&starting-point-node-id=3%3A51](https://www.figma.com/design/eDt0JbWJj7ZaogjJwLUsn8/YakuApp?node-id=0-1&p=f&t=EhGLq4XerHR7feVn-0)](https://www.figma.com/design/eDt0JbWJj7ZaogjJwLUsn8/YakuApp?node-id=0-1&t=47pf9RXtXh8Ofo3x-1))
 
