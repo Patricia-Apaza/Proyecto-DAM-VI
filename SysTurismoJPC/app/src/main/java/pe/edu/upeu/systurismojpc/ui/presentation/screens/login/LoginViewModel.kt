@@ -10,61 +10,78 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okio.IOException
-import pe.edu.upeu.systurismojpc.modelo.UsuarioDto
-import pe.edu.upeu.systurismojpc.modelo.UsuarioResp
+import pe.edu.upeu.systurismojpc.modelo.LoginRequest
+import pe.edu.upeu.systurismojpc.modelo.LoginResponse
 import pe.edu.upeu.systurismojpc.repository.UsuarioRepository
 import pe.edu.upeu.systurismojpc.utils.TokenUtils
 import java.net.SocketTimeoutException
-
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val userRepo: UsuarioRepository
-) : ViewModel(){
-    private val _isLoading: MutableLiveData<Boolean> by lazy {MutableLiveData<Boolean>(false)}
+) : ViewModel() {
+
+    private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> get() = _isLoading
 
-    private val _islogin: MutableLiveData<Boolean> by lazy {MutableLiveData<Boolean>(false)}
-    val islogin: LiveData<Boolean> get() = _islogin
+    private val _isLogin = MutableLiveData(false)
+    val isLogin: LiveData<Boolean> get() = _isLogin
 
-    val isError=MutableLiveData<Boolean>(false)
+    val isError = MutableLiveData(false)
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> = _errorMessage
 
-    val listUser = MutableLiveData<UsuarioResp>()
+    val loginResponse = MutableLiveData<LoginResponse>()
 
-    fun loginSys(toData: UsuarioDto) {
-        Log.i("LOGIN", toData.user)
+    fun loginSys(correo: String, contraseña: String) {
+        Log.i("LOGIN", correo)
         viewModelScope.launch(Dispatchers.IO) {
             _isLoading.postValue(true)
             try {
-                _islogin.postValue(false)
-                val totek=userRepo.loginUsuario(toData).body()
-                delay(1500L)
-                TokenUtils.TOKEN_CONTENT="Bearer "+totek?.token
-                Log.i("DATAXDMP", "Holas")
-                listUser.postValue(totek!!)
-                Log.i("DATAXDMP", TokenUtils.TOKEN_CONTENT)
-                if(TokenUtils.TOKEN_CONTENT!="Bearer null"){
-                    TokenUtils.USER_LOGIN=toData.user
-                    _islogin.postValue(true)
-                }else{
+                _isLogin.postValue(false)
+
+                val request = LoginRequest(correo = correo, contraseña = contraseña)
+                val response = userRepo.loginUsuario(request)
+
+                delay(1500L) // Solo para mostrar loading un poquito más
+
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    if (body != null && body.status) {
+                        // Login correcto
+                        TokenUtils.USER_LOGIN = body.correo
+                        TokenUtils.TOKEN_CONTENT = "TOKEN_FAKE_JWT" // Puedes poner aquí el JWT si después implementas token real
+
+                        loginResponse.postValue(body)
+                        _isLogin.postValue(true)
+                        Log.i("LOGIN_SUCCESS", "Bienvenido: ${body.correo}")
+                    } else {
+                        // Error de credenciales
+                        isError.postValue(true)
+                        _errorMessage.postValue("Credenciales incorrectas, intenta nuevamente")
+                    }
+                } else {
+                    Log.e("LOGIN_RESPONSE", "Error en login. Código HTTP: ${response.code()}") // <<--- Aquí lo agregué
                     isError.postValue(true)
-                    _errorMessage.postValue("Error de login: verifique sus credenciales")
+                    _errorMessage.postValue("Error del servidor al iniciar sesión")
                 }
+
                 _isLoading.postValue(false)
-            }   catch (e: SocketTimeoutException){
+
+            } catch (e: SocketTimeoutException) {
                 isError.postValue(true)
-                _errorMessage.postValue("No se pudo conectar al servidor. Verifica tu red.")
-            }catch (e: IOException) {
+                _errorMessage.postValue("Tiempo de espera agotado. Verifica tu red.")
+                _isLoading.postValue(false)
+            } catch (e: IOException) {
                 isError.postValue(true)
                 _errorMessage.postValue("Error de red: ${e.localizedMessage}")
+                _isLoading.postValue(false)
             } catch (e: Exception) {
                 isError.postValue(true)
-                _errorMessage.postValue("Ocurrió un error inesperado.")
+                _errorMessage.postValue("Ocurrió un error inesperado: ${e.localizedMessage}")
+                _isLoading.postValue(false)
             }
-
         }
     }
 
