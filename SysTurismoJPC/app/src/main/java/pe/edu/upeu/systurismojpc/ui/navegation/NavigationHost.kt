@@ -12,6 +12,12 @@ import pe.edu.upeu.systurismojpc.ui.presentation.screens.Pantalla2
 import pe.edu.upeu.systurismojpc.ui.presentation.screens.Pantalla3
 import pe.edu.upeu.systurismojpc.ui.presentation.screens.Pantalla4
 import pe.edu.upeu.systurismojpc.ui.presentation.screens.Pantalla5
+import pe.edu.upeu.systurismojpc.ui.presentation.screens.actividad.ActividadFormScreen
+import pe.edu.upeu.systurismojpc.ui.presentation.screens.actividad.ActividadMainScreen
+import pe.edu.upeu.systurismojpc.ui.presentation.screens.cliente.ClienteForm
+import pe.edu.upeu.systurismojpc.ui.presentation.screens.cliente.ClienteMain
+import pe.edu.upeu.systurismojpc.ui.presentation.screens.destino.DestinoFormScreen
+import pe.edu.upeu.systurismojpc.ui.presentation.screens.destino.DestinoMainScreen
 import pe.edu.upeu.systurismojpc.ui.presentation.screens.login.LoginScreen
 
 @Composable
@@ -50,5 +56,33 @@ fun NavigationHost(
         composable(Destinations.Pantalla5.route) {
             Pantalla5()
         }
+        composable(Destinations.ClienteMainSC.route) {
+            ClienteMain(navegarEditarAct = { id ->
+                navController.navigate(Destinations.ClienteFormSC.passId(id))
+            }, navController = navController)
+        }
+
+        composable(Destinations.ClienteFormSC.route, arguments = listOf(navArgument("cliId") { defaultValue = "0" })) { navBackStackEntry ->
+            val cliId = navBackStackEntry.arguments?.getString("cliId") ?: "0"
+            ClienteForm(text = cliId, darkMode = darkMode.value, navController = navController)
+        }
+
+        composable(Destinations.DestinoMainSC.route) {DestinoMainScreen(navController = navController)}
+
+        composable(Destinations.DestinoFormSC.route, arguments = listOf(navArgument("destinoId") { defaultValue = "" })
+        ) { navBackStackEntry ->
+            val destinoId = navBackStackEntry.arguments?.getString("destinoId")
+            DestinoFormScreen(navController = navController, destinoId = destinoId)
+        }
+
+        composable(Destinations.ActividadMainSC.route) { ActividadMainScreen(navController = navController) }
+
+        composable(Destinations.ActividadFormSC.route, arguments = listOf(navArgument("actividadId") { defaultValue = "" })
+        ) { navBackStackEntry ->
+            val actividadId = navBackStackEntry.arguments?.getString("actividadId")
+            ActividadFormScreen(navController = navController, actividadId = actividadId)
+        }
+
+
     }
 }
