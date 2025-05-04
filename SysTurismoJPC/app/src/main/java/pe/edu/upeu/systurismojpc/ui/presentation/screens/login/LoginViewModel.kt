@@ -51,11 +51,12 @@ class LoginViewModel @Inject constructor(
                     if (body != null && body.status) {
                         // Login correcto
                         TokenUtils.USER_LOGIN = body.correo
-                        TokenUtils.TOKEN_CONTENT = "TOKEN_FAKE_JWT" // Puedes poner aquí el JWT si después implementas token real
+                        TokenUtils.TOKEN_CONTENT ="Bearer ${body.token}"  // Puedes poner aquí el JWT si después implementas token real
 
                         loginResponse.postValue(body)
                         _isLogin.postValue(true)
                         Log.i("LOGIN_SUCCESS", "Bienvenido: ${body.correo}")
+                        Log.i("LOGIN_SUCCESS", "Token : ${body.token}")
                     } else {
                         // Error de credenciales
                         isError.postValue(true)

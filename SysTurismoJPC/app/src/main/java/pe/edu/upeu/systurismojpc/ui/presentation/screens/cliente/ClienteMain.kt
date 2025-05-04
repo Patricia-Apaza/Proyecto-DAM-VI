@@ -1,5 +1,6 @@
 package pe.edu.upeu.systurismojpc.ui.presentation.screens.cliente
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,6 +18,7 @@ import androidx.navigation.NavController
 import pe.edu.upeu.systurismojpc.modelo.ClienteResp
 import pe.edu.upeu.systurismojpc.ui.navegation.Destinations
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClienteMain(
@@ -41,15 +43,18 @@ fun ClienteMain(
                 Icon(Icons.Default.Add, contentDescription = "Agregar Cliente")
             }
         }
-    ) {
-        LazyColumn(modifier = Modifier.padding(16.dp)) {
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier
+                .padding(padding)
+                .padding(16.dp)
+        ) {
             items(listaClientes) { cliente ->
-                ClienteItem(cliente = cliente, onEdit = {
+                ClienteItem(cliente, onEdit = {
                     navegarEditarAct(cliente.idCliente.toString())
                 }, onDelete = {
                     viewModel.eliminarCliente(cliente)
                 })
-                Divider()
             }
         }
     }
@@ -61,24 +66,29 @@ fun ClienteItem(
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
-    Row(
-        Modifier
+    Card(
+        modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+            .padding(vertical = 8.dp),
+        shape = MaterialTheme.shapes.medium,
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column {
-            Text(text = cliente.nombreCompleto, style = MaterialTheme.typography.titleMedium)
-            Text(text = cliente.correo, style = MaterialTheme.typography.bodyMedium)
-            Text(text = cliente.telefono, style = MaterialTheme.typography.bodyMedium)
-        }
-        Row {
-            IconButton(onClick = onEdit) {
-                Icon(Icons.Default.Edit, contentDescription = "Editar")
-            }
-            IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, contentDescription = "Eliminar")
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(cliente.nombreCompleto, style = MaterialTheme.typography.titleMedium)
+            Text(cliente.correo, style = MaterialTheme.typography.bodyMedium)
+            Text(cliente.telefono, style = MaterialTheme.typography.bodySmall)
+            Text(cliente.direccion, style = MaterialTheme.typography.bodySmall)
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                IconButton(onClick = onEdit) {
+                    Icon(Icons.Default.Edit, contentDescription = "Editar")
+                }
+                IconButton(onClick = onDelete) {
+                    Icon(Icons.Default.Delete, contentDescription = "Eliminar")
+                }
             }
         }
     }

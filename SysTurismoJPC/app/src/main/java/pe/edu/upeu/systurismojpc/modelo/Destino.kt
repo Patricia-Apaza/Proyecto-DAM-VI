@@ -7,6 +7,10 @@ data class DestinoDto(
     var ubicacion: String
 )
 
+data class DestinoSimpleDto(
+    var idDestino: Long
+)
+
 data class DestinoResp(
     val idDestino: Long,
     val nombre: String,

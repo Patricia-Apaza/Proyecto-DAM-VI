@@ -15,7 +15,7 @@ interface RestDestino {
     suspend fun getDestinoId(@Header("Authorization") token: String, @Path("id") id: Long): Response<DestinoResp>
 
     @DELETE(BASE_RUTA + "/eliminar/{id}")
-    suspend fun deleteDestino(@Header("Authorization") token: String, @Path("id") id: Long): Response<Message>
+    suspend fun deleteDestino(@Header("Authorization") token: String, @Path("id") id: Long): Response<Unit>
 
     @PUT(BASE_RUTA + "/editar")
     suspend fun actualizarDestino(

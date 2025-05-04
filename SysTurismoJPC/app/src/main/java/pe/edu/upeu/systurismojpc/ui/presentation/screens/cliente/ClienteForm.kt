@@ -1,10 +1,14 @@
 package pe.edu.upeu.systurismojpc.ui.presentation.screens.cliente
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import pe.edu.upeu.systurismojpc.modelo.ClienteDto
@@ -40,65 +44,118 @@ fun ClienteForm(
         topBar = {
             TopAppBar(title = { Text(if (id == 0L) "Registrar Cliente" else "Editar Cliente") })
         }
-    ) {
-        Column(
+    ) { paddingValues ->
+        BoxWithConstraints(
             modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
                 .padding(16.dp)
-                .fillMaxWidth()
         ) {
+            val isCompact = maxWidth < 600.dp
 
-            OutlinedTextField(
-                value = nombre,
-                onValueChange = { nombre = it },
-                label = { Text("Nombre Completo") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedTextField(
-                value = correo,
-                onValueChange = { correo = it },
-                label = { Text("Correo") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedTextField(
-                value = telefono,
-                onValueChange = { telefono = it },
-                label = { Text("Teléfono") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedTextField(
-                value = direccion,
-                onValueChange = { direccion = it },
-                label = { Text("Dirección") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Button(
-                onClick = {
-                    val cliente = ClienteDto(
-                        idCliente = id,
-                        nombreCompleto = nombre,
-                        correo = correo,
-                        telefono = telefono,
-                        direccion = direccion
-                    )
-
-                    if (id == 0L) {
-                        viewModel.insertarCliente(cliente)
-                    } else {
-                        viewModel.modificarCliente(cliente)
-                    }
-
-                    navController.popBackStack()
-                },
-                modifier = Modifier.fillMaxWidth()
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(if (id == 0L) "Guardar" else "Actualizar")
+                if (isCompact) {
+                    Column {
+                        ClienteFields(
+                            nombre, { nombre = it },
+                            correo, { correo = it },
+                            telefono, { telefono = it },
+                            direccion, { direccion = it }
+                        )
+                    }
+                } else {
+                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            ClienteFields(
+                                nombre, { nombre = it },
+                                correo, { correo = it },
+                                "", {},
+                                "", {}
+                            )
+                        }
+                        Column(modifier = Modifier.weight(1f)) {
+                            ClienteFields(
+                                "", {},
+                                "", {},
+                                telefono, { telefono = it },
+                                direccion, { direccion = it }
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    onClick = {
+                        val cliente = ClienteDto(
+                            idCliente = id,
+                            nombreCompleto = nombre,
+                            correo = correo,
+                            telefono = telefono,
+                            direccion = direccion
+                        )
+
+                        if (id == 0L) {
+                            viewModel.insertarCliente(cliente)
+                        } else {
+                            viewModel.modificarCliente(cliente)
+                        }
+
+                        navController.popBackStack()
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(if (id == 0L) "Guardar" else "Actualizar")
+                }
             }
         }
+    }
+}
+
+@Composable
+fun ClienteFields(
+    nombre: String, onNombreChange: (String) -> Unit,
+    correo: String, onCorreoChange: (String) -> Unit,
+    telefono: String, onTelefonoChange: (String) -> Unit,
+    direccion: String, onDireccionChange: (String) -> Unit
+) {
+    if (onNombreChange !== {}) {
+        OutlinedTextField(
+            value = nombre,
+            onValueChange = onNombreChange,
+            label = { Text("Nombre Completo") },
+            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+        )
+    }
+    if (onCorreoChange !== {}) {
+        OutlinedTextField(
+            value = correo,
+            onValueChange = onCorreoChange,
+            label = { Text("Correo") },
+            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+        )
+    }
+    if (onTelefonoChange !== {}) {
+        OutlinedTextField(
+            value = telefono,
+            onValueChange = onTelefonoChange,
+            label = { Text("Teléfono") },
+            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+        )
+    }
+    if (onDireccionChange !== {}) {
+        OutlinedTextField(
+            value = direccion,
+            onValueChange = onDireccionChange,
+            label = { Text("Dirección") },
+            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+        )
     }
 }

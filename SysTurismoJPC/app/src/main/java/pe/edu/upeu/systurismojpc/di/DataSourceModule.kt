@@ -1,5 +1,6 @@
 package pe.edu.upeu.systurismojpc.di
 
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,15 +29,21 @@ class DataSourceModule {
     @Provides
     fun provideRetrofit(@Named("BaseUrl") baseUrl:String):
             Retrofit {
+
+
         val okHttpClient= OkHttpClient.Builder()
             .connectTimeout(1, TimeUnit.MINUTES)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(15, TimeUnit.SECONDS)
             .build()
         if (retrofit==null){
+            val gson = GsonBuilder()
+                .setLenient()
+                .create()
+
             retrofit= Retrofit.Builder()
 
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(okHttpClient)
                 .baseUrl(baseUrl).build()
         }

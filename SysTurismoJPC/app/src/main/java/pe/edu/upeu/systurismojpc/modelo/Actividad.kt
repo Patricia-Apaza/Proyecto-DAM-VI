@@ -5,7 +5,7 @@ data class ActividadDto(
     var nombre: String,
     var descripcion: String,
     var precio: Double,
-    var destino: Long // Solo se envía el ID del destino
+    var destino: DestinoSimpleDto
 )
 
 data class ActividadResp(
@@ -22,6 +22,6 @@ fun ActividadResp.toDto(): ActividadDto {
         nombre = this.nombre,
         descripcion = this.descripcion,
         precio = this.precio,
-        destino = this.destino.idDestino
+        destino = DestinoSimpleDto(this.destino.idDestino)
     )
 }

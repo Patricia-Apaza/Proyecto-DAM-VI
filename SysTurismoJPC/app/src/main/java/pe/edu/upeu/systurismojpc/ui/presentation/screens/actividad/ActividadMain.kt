@@ -31,25 +31,42 @@ fun ActividadMainScreen(
             }
         }
     ) { padding ->
-        LazyColumn(modifier = Modifier.padding(padding).padding(16.dp)) {
+        LazyColumn(
+            modifier = Modifier
+                .padding(padding)
+                .padding(16.dp)
+        ) {
             items(lista.size) { index ->
                 val actividad = lista[index]
-                Card(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    shape = MaterialTheme.shapes.medium,
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = actividad.nombre, style = MaterialTheme.typography.titleLarge)
-                        Text(text = actividad.descripcion)
-                        Text(text = "Precio: S/ ${actividad.precio}")
-                        Text(text = "Destino: ${actividad.destino.nombre}")
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                        Text(text = actividad.nombre, style = MaterialTheme.typography.titleMedium)
+                        Text(text = actividad.descripcion, style = MaterialTheme.typography.bodySmall)
+                        Text(text = "Precio: S/ ${actividad.precio}", style = MaterialTheme.typography.bodySmall)
+                        Text(text = "Destino: ${actividad.destino.nombre}", style = MaterialTheme.typography.bodySmall)
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp),
+                            horizontalArrangement = Arrangement.End
+                        ) {
                             TextButton(onClick = {
                                 navController.navigate(Destinations.ActividadFormSC.passId(actividad.idActividad.toString()))
-                            }) { Text("Editar") }
-
+                            }) {
+                                Text("Editar")
+                            }
                             TextButton(onClick = {
                                 actividadViewModel.eliminarActividad(actividad.toDto()) {}
-                            }) { Text("Eliminar") }
+                            }) {
+                                Text("Eliminar")
+                            }
                         }
                     }
                 }

@@ -52,6 +52,4 @@ sealed class Destinations(
             return "actividadForm?actividadId=${actividadId ?: ""}"
         }
     }
-
-
 }

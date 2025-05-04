@@ -1,5 +1,6 @@
 package pe.edu.upeu.sysgestionturismo.control;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,6 +13,8 @@ import pe.edu.upeu.sysgestionturismo.servicio.IUsuarioService;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.security.core.userdetails.UserDetails;
+import pe.edu.upeu.sysgestionturismo.security.JwtTokenUtil;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -26,6 +29,8 @@ public class AuthController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private  JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/login")
     public Map<String, Object> login(@RequestBody JwtRequest request) {
@@ -34,9 +39,13 @@ public class AuthController {
             Authentication auth = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getCorreo(), request.getContraseña())
             );
+            
+            UserDetails userDetails = (UserDetails) auth.getPrincipal();
             response.put("message", "Login exitoso");
             response.put("correo", request.getCorreo());
             response.put("status", true);
+            response.put("token", jwtTokenUtil.generateToken(userDetails));
+            
         } catch (Exception e) {
             response.put("message", "Credenciales incorrectas");
             response.put("status", false);

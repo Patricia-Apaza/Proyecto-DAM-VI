@@ -1,5 +1,6 @@
 package pe.edu.upeu.systurismojpc.repository
 
+import android.util.Log
 import pe.edu.upeu.systurismojpc.data.remote.RestCliente
 import pe.edu.upeu.systurismojpc.modelo.ClienteDto
 import pe.edu.upeu.systurismojpc.modelo.ClienteResp
@@ -18,8 +19,15 @@ class ClienteRepositoryImp @Inject constructor(
     }
 
     override suspend fun reportarClientes(): List<ClienteResp> {
-        val response = restCliente.reportarClientes(TokenUtils.TOKEN_CONTENT)
-        return if (response.isSuccessful) response.body() ?: emptyList() else emptyList()
+        try {
+            var response = restCliente.reportarClientes(TokenUtils.TOKEN_CONTENT)
+            Log.i("ERROR", "VERRR")
+
+            return if (response.isSuccessful) response.body() ?: emptyList() else emptyList()
+        }catch (e: Exception){
+            Log.e("ERROR", "${e.message}")
+            return emptyList()
+        }
     }
 
     override suspend fun buscarClienteId(id: Long): ClienteResp {
