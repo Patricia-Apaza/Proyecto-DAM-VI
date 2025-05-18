@@ -4,7 +4,8 @@ data class DestinoDto(
     var idDestino: Long,
     var nombre: String,
     var descripcion: String,
-    var ubicacion: String
+    var ubicacion: String,
+    var imagenPath: String
 )
 
 data class DestinoSimpleDto(
@@ -15,7 +16,8 @@ data class DestinoResp(
     val idDestino: Long,
     val nombre: String,
     val descripcion: String,
-    val ubicacion: String
+    val ubicacion: String,
+    val imagenPath: String
 )
 
 fun DestinoResp.toDto(): DestinoDto {
@@ -23,6 +25,7 @@ fun DestinoResp.toDto(): DestinoDto {
         idDestino = this.idDestino,
         nombre = this.nombre,
         descripcion = this.descripcion,
-        ubicacion = this.ubicacion
+        ubicacion = this.ubicacion,
+        imagenPath = this.imagenPath
     )
 }

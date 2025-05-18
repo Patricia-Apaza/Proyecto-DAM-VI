@@ -1,9 +1,13 @@
 package pe.edu.upeu.systurismojpc.repository
 
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import pe.edu.upeu.systurismojpc.data.remote.RestDestino
 import pe.edu.upeu.systurismojpc.modelo.DestinoDto
 import pe.edu.upeu.systurismojpc.modelo.DestinoResp
 import pe.edu.upeu.systurismojpc.utils.TokenUtils
+import java.io.File
 import javax.inject.Inject
 
 class DestinoRepositoryImp @Inject constructor(
@@ -33,5 +37,28 @@ class DestinoRepositoryImp @Inject constructor(
     override suspend fun modificarDestino(destino: DestinoDto): Boolean {
         val response = restDestino.actualizarDestino(TokenUtils.TOKEN_CONTENT, destino)
         return response.isSuccessful && response.body()?.idDestino != null
+    }
+
+    override suspend fun insertarDestinoConImagen(
+        nombre: String,
+        descripcion: String,
+        ubicacion: String,
+        imageFile: File
+    ): Boolean {
+        val requestFile = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
+        val body = MultipartBody.Part.createFormData("imagen", imageFile.name, requestFile)
+
+        val nombrePart = MultipartBody.Part.createFormData("nombre", nombre)
+        val descripcionPart = MultipartBody.Part.createFormData("descripcion", descripcion)
+        val ubicacionPart = MultipartBody.Part.createFormData("ubicacion", ubicacion)
+
+        val response = restDestino.insertarDestinoConImagen(
+            TokenUtils.TOKEN_CONTENT,
+            nombrePart,
+            descripcionPart,
+            ubicacionPart,
+            body
+        )
+        return response.isSuccessful
     }
 }

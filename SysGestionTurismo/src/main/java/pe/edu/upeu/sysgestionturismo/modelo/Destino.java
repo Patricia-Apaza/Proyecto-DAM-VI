@@ -13,4 +13,5 @@ public class Destino {
     private String nombre;
     private String descripcion;
     private String ubicacion;
+    private String imagenPath;
 }

@@ -21,10 +21,9 @@ import static org.springframework.security.web.util.matcher.AntPathRequestMatche
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity //Importante para anotaciones @PreAuthorize
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
-    
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final UserDetailsService jwtUserDetailsService;
@@ -47,15 +46,19 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        //Desde Spring Boot 3.0+
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers(HttpMethod.POST, "/api/auth/**",
-                                "users/register").permitAll()
+                        .requestMatchers(
+                                HttpMethod.POST, "/api/auth/**", "users/register"
+                        ).permitAll()
+                        .requestMatchers("/imagenes/**").permitAll()
+
+                        // Swagger / OpenAPI
                         .requestMatchers(antMatcher("/v3/api-docs/**")).permitAll()
                         .requestMatchers(antMatcher("/swagger-ui/**")).permitAll()
                         .requestMatchers(antMatcher("/doc/**")).permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
@@ -64,29 +67,5 @@ public class WebSecurityConfig {
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }    
-
-    /*@Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/**", "/v3/api-docs/**", "/swagger-ui/**", "/doc/swagger-ui.html", "/swagger-ui.html").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .formLogin();
-        return http.build();
     }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }*/
-    
-    
-    
 }

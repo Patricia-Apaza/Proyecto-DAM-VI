@@ -1,5 +1,6 @@
 package pe.edu.upeu.systurismojpc.data.remote
 
+import okhttp3.MultipartBody
 import pe.edu.upeu.systurismojpc.modelo.DestinoDto
 import pe.edu.upeu.systurismojpc.modelo.DestinoResp
 import pe.edu.upeu.systurismojpc.modelo.Message
@@ -29,7 +30,18 @@ interface RestDestino {
         @Body destino: DestinoDto
     ): Response<DestinoResp>
 
+    @Multipart
+    @POST("/api/destino/guardar-con-imagen")
+    suspend fun insertarDestinoConImagen(
+        @Header("Authorization") token: String,
+        @Part nombre: MultipartBody.Part,
+        @Part descripcion: MultipartBody.Part,
+        @Part ubicacion: MultipartBody.Part,
+        @Part imagen: MultipartBody.Part
+    ): Response<Void>
+
     companion object {
         const val BASE_RUTA = "/api/destino"
     }
 }
+

@@ -1,5 +1,8 @@
 package pe.edu.upeu.systurismojpc.ui.presentation.screens.destino
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -7,9 +10,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import pe.edu.upeu.systurismojpc.modelo.DestinoDto
 
@@ -21,10 +27,20 @@ fun DestinoFormScreen(
     destinoViewModel: DestinoViewModel = hiltViewModel()
 ) {
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     var nombre by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
     var ubicacion by remember { mutableStateOf("") }
+    var imagenPath by remember { mutableStateOf("") }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            imagenPath = it.toString()
+        }
+    }
 
     LaunchedEffect(destinoId) {
         if (!destinoId.isNullOrBlank()) {
@@ -32,6 +48,7 @@ fun DestinoFormScreen(
             nombre = destino.nombre
             descripcion = destino.descripcion
             ubicacion = destino.ubicacion
+            imagenPath = destino.imagenPath ?: ""
         }
     }
 
@@ -64,6 +81,29 @@ fun DestinoFormScreen(
                             descripcion, { descripcion = it },
                             ubicacion, { ubicacion = it }
                         )
+
+                        Button(
+                            onClick = {
+                                launcher.launch("image/*")
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp)
+                        ) {
+                            Text("Seleccionar Imagen")
+                        }
+
+                        if (imagenPath.isNotBlank()) {
+                            AsyncImage(
+                                model = imagenPath,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(180.dp)
+                                    .padding(bottom = 8.dp),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
                     }
                 } else {
                     Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -80,6 +120,29 @@ fun DestinoFormScreen(
                                 "", {},
                                 ubicacion, { ubicacion = it }
                             )
+
+                            Button(
+                                onClick = {
+                                    launcher.launch("image/*")
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 8.dp)
+                            ) {
+                                Text("Seleccionar Imagen")
+                            }
+
+                            if (imagenPath.isNotBlank()) {
+                                AsyncImage(
+                                    model = imagenPath,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(180.dp)
+                                        .padding(bottom = 8.dp),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
                         }
                     }
                 }
@@ -88,19 +151,33 @@ fun DestinoFormScreen(
 
                 Button(
                     onClick = {
-                        val dto = DestinoDto(
-                            idDestino = destinoId?.toLongOrNull() ?: 0L,
-                            nombre = nombre,
-                            descripcion = descripcion,
-                            ubicacion = ubicacion
-                        )
                         scope.launch {
                             if (destinoId.isNullOrBlank()) {
-                                destinoViewModel.guardarDestino(dto) {}
+                                destinoViewModel.guardarDestinoConImagen(
+                                    context = context,
+                                    nombre = nombre,
+                                    descripcion = descripcion,
+                                    ubicacion = ubicacion,
+                                    imagenUri = Uri.parse(imagenPath)
+                                ) { success ->
+                                    if (success) {
+                                        navController.popBackStack()
+                                    } else {
+                                        // Mostrar error si deseas
+                                    }
+                                }
                             } else {
-                                destinoViewModel.modificarDestino(dto) {}
+                                val dto = DestinoDto(
+                                    idDestino = destinoId.toLong(),
+                                    nombre = nombre,
+                                    descripcion = descripcion,
+                                    ubicacion = ubicacion,
+                                    imagenPath = imagenPath
+                                )
+                                destinoViewModel.modificarDestino(dto) {
+                                    navController.popBackStack()
+                                }
                             }
-                            navController.popBackStack()
                         }
                     },
                     modifier = Modifier.fillMaxWidth()
@@ -112,34 +189,37 @@ fun DestinoFormScreen(
     }
 }
 
+
 @Composable
 fun DestinoFields(
     nombre: String, onNombreChange: (String) -> Unit,
     descripcion: String, onDescripcionChange: (String) -> Unit,
     ubicacion: String, onUbicacionChange: (String) -> Unit
 ) {
-    if (onNombreChange !== {}) {
-        OutlinedTextField(
-            value = nombre,
-            onValueChange = onNombreChange,
-            label = { Text("Nombre") },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-        )
-    }
-    if (onDescripcionChange !== {}) {
-        OutlinedTextField(
-            value = descripcion,
-            onValueChange = onDescripcionChange,
-            label = { Text("Descripción") },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-        )
-    }
-    if (onUbicacionChange !== {}) {
-        OutlinedTextField(
-            value = ubicacion,
-            onValueChange = onUbicacionChange,
-            label = { Text("Ubicación") },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-        )
-    }
+    OutlinedTextField(
+        value = nombre,
+        onValueChange = onNombreChange,
+        label = { Text("Nombre") },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp)
+    )
+
+    OutlinedTextField(
+        value = descripcion,
+        onValueChange = onDescripcionChange,
+        label = { Text("Descripción") },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp)
+    )
+
+    OutlinedTextField(
+        value = ubicacion,
+        onValueChange = onUbicacionChange,
+        label = { Text("Ubicación") },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp)
+    )
 }
