@@ -13,6 +13,9 @@ public class Actividad {
     private String nombre;
     private String descripcion;
     private Double precio;
+    private String nivelRiesgo;
+    private String whatsappContacto;
+    private String imagenPath;
 
     @ManyToOne
     @JoinColumn(name = "idDestino")

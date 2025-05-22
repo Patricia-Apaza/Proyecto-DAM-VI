@@ -8,5 +8,8 @@ public class ActividadDto {
     private String nombre;
     private String descripcion;
     private Double precio;
-    private Long idDestino; // Relación con Destino
+    private String nivelRiesgo;
+    private String whatsappContacto;
+    private String imagenPath;
+    private Long idDestino;
 }
