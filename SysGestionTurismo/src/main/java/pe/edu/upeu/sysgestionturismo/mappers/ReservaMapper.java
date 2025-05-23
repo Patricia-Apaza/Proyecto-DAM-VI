@@ -12,7 +12,7 @@ public class ReservaMapper {
         dto.setId_reserva(reserva.getIdReserva());
         dto.setId_cliente(reserva.getCliente() != null ? reserva.getCliente().getIdCliente() : null);
         dto.setTipo_reserva(reserva.getTipoReserva());
-        dto.setId_paquete(reserva.getPaqueteTuristico() != null ? reserva.getPaqueteTuristico().getIdPaquete() : null);
+        dto.setId_paquete(reserva.getPaqueteTuristico() != null ? reserva.getPaqueteTuristico().getIdPaqueteTuristico() : null);
         dto.setEstado_reserva(reserva.getEstadoReserva());
         dto.setFecha_inicio(reserva.getFechaInicio());
         dto.setFecha_fin(reserva.getFechaFin());
@@ -41,7 +41,7 @@ public class ReservaMapper {
 
         if (dto.getId_paquete() != null) {
             PaqueteTuristico paquete = new PaqueteTuristico();
-            paquete.setIdPaquete(dto.getId_paquete());
+            paquete.setIdPaqueteTuristico(dto.getId_paquete());
             reserva.setPaqueteTuristico(paquete);
         }
 

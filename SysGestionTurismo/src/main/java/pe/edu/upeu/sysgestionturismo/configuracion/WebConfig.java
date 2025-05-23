@@ -27,5 +27,10 @@ public class WebConfig implements WebMvcConfigurer {
         String uploadPathHospedajes = System.getProperty("user.dir") + "/uploads/hospedajes/";
         registry.addResourceHandler("/imagenes/hospedajes/**")
                 .addResourceLocations("file:" + uploadPathHospedajes);
+
+        // Para paquetes turísticos
+        String uploadPathPaquetes = System.getProperty("user.dir") + "/uploads/paquetes/";
+        registry.addResourceHandler("/imagenes/paquetes/**")
+                .addResourceLocations("file:" + uploadPathPaquetes);
     }
 }

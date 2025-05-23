@@ -5,10 +5,12 @@ import java.util.List;
 
 @Data
 public class PaqueteTuristicoDto {
-    private Long idPaquete;
+    private Long idPaqueteTuristico;  // nuevo nombre
+    private Long idDestino;
     private String nombre;
     private String descripcion;
+    private int duracionDias;
+    private String whatsappContacto;
     private Double precioTotal;
-    private List<Long> actividadesIds; // Lista de IDs de Actividades
-    private Long idDestino;
+    private String imagenPath;
 }

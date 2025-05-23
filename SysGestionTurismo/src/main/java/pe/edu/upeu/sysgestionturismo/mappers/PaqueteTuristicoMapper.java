@@ -8,33 +8,37 @@ import pe.edu.upeu.sysgestionturismo.modelo.PaqueteTuristico;
 import java.util.stream.Collectors;
 
 public class PaqueteTuristicoMapper {
+
     public static PaqueteTuristicoDto toDto(PaqueteTuristico paquete) {
         PaqueteTuristicoDto dto = new PaqueteTuristicoDto();
-        dto.setIdPaquete(paquete.getIdPaquete());
+        dto.setIdPaqueteTuristico(paquete.getIdPaqueteTuristico());
+        dto.setIdDestino(paquete.getDestino() != null ? paquete.getDestino().getIdDestino() : null);
         dto.setNombre(paquete.getNombre());
         dto.setDescripcion(paquete.getDescripcion());
+        dto.setDuracionDias(paquete.getDuracionDias());
+        dto.setWhatsappContacto(paquete.getWhatsappContacto());
         dto.setPrecioTotal(paquete.getPrecioTotal());
-        if (paquete.getActividades() != null) {
-            dto.setActividadesIds(paquete.getActividades().stream()
-                    .map(Actividad::getIdActividad)
-                    .collect(Collectors.toList()));
-        }
-        dto.setIdDestino(paquete.getDestino() != null ? paquete.getDestino().getIdDestino() : null);
+        dto.setImagenPath(paquete.getImagenPath());
         return dto;
     }
 
     public static PaqueteTuristico toEntity(PaqueteTuristicoDto dto) {
         PaqueteTuristico paquete = new PaqueteTuristico();
-        paquete.setIdPaquete(dto.getIdPaquete());
-        paquete.setNombre(dto.getNombre());
-        paquete.setDescripcion(dto.getDescripcion());
-        paquete.setPrecioTotal(dto.getPrecioTotal());
+        paquete.setIdPaqueteTuristico(dto.getIdPaqueteTuristico());
 
         if (dto.getIdDestino() != null) {
             Destino destino = new Destino();
             destino.setIdDestino(dto.getIdDestino());
             paquete.setDestino(destino);
         }
+
+        paquete.setNombre(dto.getNombre());
+        paquete.setDescripcion(dto.getDescripcion());
+        paquete.setDuracionDias(dto.getDuracionDias());
+        paquete.setWhatsappContacto(dto.getWhatsappContacto());
+        paquete.setPrecioTotal(dto.getPrecioTotal());
+        paquete.setImagenPath(dto.getImagenPath());
+
         return paquete;
     }
 }

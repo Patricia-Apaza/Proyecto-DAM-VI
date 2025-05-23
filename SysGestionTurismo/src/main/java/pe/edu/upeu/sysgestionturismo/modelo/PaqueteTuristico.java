@@ -9,21 +9,16 @@ import java.util.List;
 public class PaqueteTuristico {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idPaquete;
+    private Long idPaqueteTuristico;
 
     private String nombre;
     private String descripcion;
+    private int duracionDias;
+    private String whatsappContacto;
     private Double precioTotal;
-
-    @ManyToMany
-    @JoinTable(
-            name = "paquete_actividad",
-            joinColumns = @JoinColumn(name = "idPaquete"),
-            inverseJoinColumns = @JoinColumn(name = "idActividad")
-    )
-    private List<Actividad> actividades;
+    private String imagenPath;
 
     @ManyToOne
-    @JoinColumn(name = "idDestino")
+    @JoinColumn(name = "id_destino")
     private Destino destino;
 }
