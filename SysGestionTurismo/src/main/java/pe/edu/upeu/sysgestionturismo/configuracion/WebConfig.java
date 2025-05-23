@@ -22,5 +22,10 @@ public class WebConfig implements WebMvcConfigurer {
         String uploadPathClientes = System.getProperty("user.dir") + "/uploads/clientes/";
         registry.addResourceHandler("/imagenes/clientes/**")
                 .addResourceLocations("file:" + uploadPathClientes);
+
+        // Para hospedajes
+        String uploadPathHospedajes = System.getProperty("user.dir") + "/uploads/hospedajes/";
+        registry.addResourceHandler("/imagenes/hospedajes/**")
+                .addResourceLocations("file:" + uploadPathHospedajes);
     }
 }

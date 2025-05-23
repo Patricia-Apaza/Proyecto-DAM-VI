@@ -12,7 +12,10 @@ public class Hospedaje {
 
     private String nombre;
     private String descripcion;
+    private String direccion;
+    private String whatsappContacto;
     private Double precioPorNoche;
+    private String imagenPath;
 
     @ManyToOne
     @JoinColumn(name = "idDestino")
