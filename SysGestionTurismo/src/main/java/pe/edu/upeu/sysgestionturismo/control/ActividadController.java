@@ -70,12 +70,12 @@ public class ActividadController {
 
     @PostMapping(value = "/guardar-con-imagen", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> guardarConImagen(
+            @RequestParam("idDestino") Long idDestino,
             @RequestParam("nombre") String nombre,
             @RequestParam("descripcion") String descripcion,
-            @RequestParam("precio") Double precio,
             @RequestParam("nivelRiesgo") String nivelRiesgo,
             @RequestParam("whatsappContacto") String whatsappContacto,
-            @RequestParam("idDestino") Long idDestino,
+            @RequestParam("precio") Double precio,
             @RequestPart("imagen") MultipartFile imagen) {
 
         try {
@@ -100,16 +100,16 @@ public class ActividadController {
             imagen.transferTo(archivoDestino);
 
             Actividad actividad = new Actividad();
-            actividad.setNombre(nombre);
-            actividad.setDescripcion(descripcion);
-            actividad.setPrecio(precio);
-            actividad.setNivelRiesgo(nivelRiesgo);
-            actividad.setWhatsappContacto(whatsappContacto);
-            actividad.setImagenPath("/imagenes/actividades/" + nombreArchivo);
-
             pe.edu.upeu.sysgestionturismo.modelo.Destino destino = new pe.edu.upeu.sysgestionturismo.modelo.Destino();
             destino.setIdDestino(idDestino);
             actividad.setDestino(destino);
+
+            actividad.setNombre(nombre);
+            actividad.setDescripcion(descripcion);
+            actividad.setNivelRiesgo(nivelRiesgo);
+            actividad.setWhatsappContacto(whatsappContacto);
+            actividad.setPrecio(precio);
+            actividad.setImagenPath("/imagenes/actividades/" + nombreArchivo);
 
             return ResponseEntity.ok(actividadService.save(actividad));
 
