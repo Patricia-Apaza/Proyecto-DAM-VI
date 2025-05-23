@@ -5,9 +5,12 @@ import lombok.Data;
 @Data
 public class ClienteDto {
     private Long idCliente;
-    private String nombreCompleto;
+    private String nombres;
+    private String apellidos;
+    private String numDocumento;
+    private String imagenPerfil;
+    private String whatsappContacto;
     private String correo;
-    private String telefono;
     private String direccion;
+    private String tipoDocumento;
 }
-

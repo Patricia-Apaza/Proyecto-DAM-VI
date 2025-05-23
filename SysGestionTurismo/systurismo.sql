@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 22, 2025 at 10:38 PM
+-- Generation Time: May 23, 2025 at 12:10 AM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.16
 
@@ -102,26 +102,26 @@ INSERT INTO `checkout` (`id_checkout`, `id_reserva`, `tipo_reserva`, `fecha_chec
 
 CREATE TABLE `cliente` (
   `id_cliente` bigint NOT NULL,
-  `nombres` varchar(100) NOT NULL,
-  `apellidos` varchar(100) NOT NULL,
-  `num_documento` varchar(20) DEFAULT NULL,
+  `nombres` varchar(255) DEFAULT NULL,
+  `apellidos` varchar(255) DEFAULT NULL,
+  `num_documento` varchar(255) DEFAULT NULL,
   `imagen_perfil` varchar(255) DEFAULT NULL,
-  `whatsapp_contacto` varchar(20) DEFAULT NULL,
+  `whatsapp_contacto` varchar(255) DEFAULT NULL,
   `correo` varchar(255) DEFAULT NULL,
-  `telefono` varchar(255) DEFAULT NULL,
   `direccion` varchar(255) DEFAULT NULL,
-  `tipo_documento` varchar(20) DEFAULT NULL,
-  `nombre_completo` varchar(255) DEFAULT NULL
+  `tipo_documento` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `cliente`
 --
 
-INSERT INTO `cliente` (`id_cliente`, `nombres`, `apellidos`, `num_documento`, `imagen_perfil`, `whatsapp_contacto`, `correo`, `telefono`, `direccion`, `tipo_documento`, `nombre_completo`) VALUES
-(1, '', '', NULL, NULL, NULL, 'juan@gmail.com', '987654321', 'Av. Principal 123', NULL, NULL),
-(2, '', '', NULL, NULL, NULL, 'ana@gmail.com', '912345678', 'Jirn la Paz', NULL, NULL),
-(10, '', '', NULL, NULL, NULL, 'mara@gmail.com', '976543234', 'Pirmides', NULL, NULL);
+INSERT INTO `cliente` (`id_cliente`, `nombres`, `apellidos`, `num_documento`, `imagen_perfil`, `whatsapp_contacto`, `correo`, `direccion`, `tipo_documento`) VALUES
+(1, '', '', NULL, NULL, NULL, 'juan@gmail.com', 'Av. Principal 123', NULL),
+(2, '', '', NULL, NULL, NULL, 'ana@gmail.com', 'Jirn la Paz', NULL),
+(10, '', '', NULL, NULL, NULL, 'mara@gmail.com', 'Pirmides', NULL),
+(11, 'Laura', 'Mendoza', '12345678', '/imagenes/clientes/1747958486726_perfil.png', '952394458', 'laura@gmail.com', 'Jr. San Martin', NULL),
+(12, 'Laura', 'Mendoza', '12345678', '/imagenes/clientes/1747958995271_perfil.png', '952394458', 'laura@gmail.com', 'Jr. San Martin', 'DNI');
 
 -- --------------------------------------------------------
 
@@ -885,7 +885,7 @@ ALTER TABLE `actividad`
 -- AUTO_INCREMENT for table `cliente`
 --
 ALTER TABLE `cliente`
-  MODIFY `id_cliente` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_cliente` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `destino`
