@@ -9,6 +9,8 @@ import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import pe.edu.upeu.sysgestionturismo.dtos.ClienteDto;
+import pe.edu.upeu.sysgestionturismo.mappers.ClienteMapper;
 import pe.edu.upeu.sysgestionturismo.modelo.Cliente;
 import pe.edu.upeu.sysgestionturismo.servicio.IClienteService;
 
@@ -18,6 +20,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/cliente")
@@ -28,18 +31,22 @@ public class ClienteController {
     private IClienteService clienteService;
 
     @GetMapping("/listar")
-    public List<Cliente> listar() {
-        return clienteService.findAll();
+    public List<ClienteDto> listar() {
+        return clienteService.findAll().stream()
+                .map(ClienteMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/guardar")
-    public Cliente guardar(@RequestBody Cliente cliente) {
-        return clienteService.save(cliente);
+    public ClienteDto guardar(@RequestBody ClienteDto clienteDto) {
+        Cliente cliente = ClienteMapper.toEntity(clienteDto);
+        return ClienteMapper.toDto(clienteService.save(cliente));
     }
 
     @PutMapping("/editar")
-    public Cliente editar(@RequestBody Cliente cliente) {
-        return clienteService.update(cliente);
+    public ClienteDto editar(@RequestBody ClienteDto clienteDto) {
+        Cliente cliente = ClienteMapper.toEntity(clienteDto);
+        return ClienteMapper.toDto(clienteService.update(cliente));
     }
 
     @DeleteMapping("/eliminar/{id}")
@@ -48,19 +55,20 @@ public class ClienteController {
     }
 
     @GetMapping("/buscar/{id}")
-    public Cliente buscar(@PathVariable Long id) {
-        return clienteService.findById(id);
+    public ClienteDto buscar(@PathVariable Long id) {
+        Cliente cliente = clienteService.findById(id);
+        return cliente != null ? ClienteMapper.toDto(cliente) : null;
     }
 
     @PostMapping(value = "/guardar-con-imagen", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> guardarConImagen(
             @RequestParam("nombres") String nombres,
             @RequestParam("apellidos") String apellidos,
-            @RequestParam(value = "numDocumento", required = false) String numDocumento,
-            @RequestParam(value = "whatsappContacto", required = false) String whatsappContacto,
-            @RequestParam(value = "correo", required = false) String correo,
-            @RequestParam(value = "direccion", required = false) String direccion,
             @RequestParam(value = "tipoDocumento", required = false) String tipoDocumento,
+            @RequestParam(value = "numDocumento", required = false) String numDocumento,
+            @RequestParam(value = "direccion", required = false) String direccion,
+            @RequestParam(value = "correo", required = false) String correo,
+            @RequestParam(value = "whatsappContacto", required = false) String whatsappContacto,
             @RequestPart("imagenPerfil") MultipartFile imagen) {
 
         try {
@@ -84,14 +92,14 @@ public class ClienteController {
             Cliente cliente = new Cliente();
             cliente.setNombres(nombres);
             cliente.setApellidos(apellidos);
-            cliente.setNumDocumento(numDocumento);
-            cliente.setWhatsappContacto(whatsappContacto);
-            cliente.setCorreo(correo);
-            cliente.setDireccion(direccion);
             cliente.setTipoDocumento(tipoDocumento);
+            cliente.setNumDocumento(numDocumento);
+            cliente.setDireccion(direccion);
+            cliente.setCorreo(correo);
+            cliente.setWhatsappContacto(whatsappContacto);
             cliente.setImagenPerfil("/imagenes/clientes/" + nombreArchivo);
 
-            return ResponseEntity.ok(clienteService.save(cliente));
+            return ResponseEntity.ok(ClienteMapper.toDto(clienteService.save(cliente)));
 
         } catch (IOException e) {
             e.printStackTrace();

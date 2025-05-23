@@ -4,13 +4,13 @@ import lombok.Data;
 
 @Data
 public class ClienteDto {
-    private Long idCliente;
+    private Long id_cliente;
     private String nombres;
     private String apellidos;
-    private String numDocumento;
-    private String imagenPerfil;
-    private String whatsappContacto;
-    private String correo;
+    private String tipo_documento;
+    private String num_documento;
     private String direccion;
-    private String tipoDocumento;
+    private String correo;
+    private String whatsapp_contacto;
+    private String imagen_perfil;
 }
