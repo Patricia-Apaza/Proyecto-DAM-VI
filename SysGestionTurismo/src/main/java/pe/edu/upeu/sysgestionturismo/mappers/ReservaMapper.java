@@ -6,34 +6,42 @@ import pe.edu.upeu.sysgestionturismo.modelo.PaqueteTuristico;
 import pe.edu.upeu.sysgestionturismo.modelo.Reserva;
 
 public class ReservaMapper {
+
     public static ReservaDto toDto(Reserva reserva) {
         ReservaDto dto = new ReservaDto();
-        dto.setIdReserva(reserva.getIdReserva());
-        dto.setFechaReserva(reserva.getFechaReserva());
-        dto.setFechaInicio(reserva.getFechaInicio());
-        dto.setFechaFin(reserva.getFechaFin());
-        dto.setNumeroPersonas(reserva.getNumeroPersonas());
-        dto.setIdCliente(reserva.getCliente() != null ? reserva.getCliente().getIdCliente() : null);
-        dto.setIdPaquete(reserva.getPaqueteTuristico() != null ? reserva.getPaqueteTuristico().getIdPaquete() : null);
+        dto.setId_reserva(reserva.getIdReserva());
+        dto.setId_cliente(reserva.getCliente() != null ? reserva.getCliente().getIdCliente() : null);
+        dto.setTipo_reserva(reserva.getTipoReserva());
+        dto.setId_paquete(reserva.getPaqueteTuristico() != null ? reserva.getPaqueteTuristico().getIdPaquete() : null);
+        dto.setEstado_reserva(reserva.getEstadoReserva());
+        dto.setFecha_inicio(reserva.getFechaInicio());
+        dto.setFecha_fin(reserva.getFechaFin());
+        dto.setNumero_personas(reserva.getNumeroPersonas());
+        dto.setTotal_pago(reserva.getTotalPago());
+        dto.setObservaciones(reserva.getObservaciones());
         return dto;
     }
 
     public static Reserva toEntity(ReservaDto dto) {
         Reserva reserva = new Reserva();
-        reserva.setIdReserva(dto.getIdReserva());
-        reserva.setFechaReserva(dto.getFechaReserva());
-        reserva.setFechaInicio(dto.getFechaInicio());
-        reserva.setFechaFin(dto.getFechaFin());
-        reserva.setNumeroPersonas(dto.getNumeroPersonas());
+        reserva.setIdReserva(dto.getId_reserva());
+        reserva.setTipoReserva(dto.getTipo_reserva());
+        reserva.setEstadoReserva(dto.getEstado_reserva());
+        reserva.setFechaInicio(dto.getFecha_inicio());
+        reserva.setFechaFin(dto.getFecha_fin());
+        reserva.setNumeroPersonas(dto.getNumero_personas());
+        reserva.setTotalPago(dto.getTotal_pago());
+        reserva.setObservaciones(dto.getObservaciones());
 
-        if (dto.getIdCliente() != null) {
+        if (dto.getId_cliente() != null) {
             Cliente cliente = new Cliente();
-            cliente.setIdCliente(dto.getIdCliente());
+            cliente.setIdCliente(dto.getId_cliente());
             reserva.setCliente(cliente);
         }
-        if (dto.getIdPaquete() != null) {
+
+        if (dto.getId_paquete() != null) {
             PaqueteTuristico paquete = new PaqueteTuristico();
-            paquete.setIdPaquete(dto.getIdPaquete());
+            paquete.setIdPaquete(dto.getId_paquete());
             reserva.setPaqueteTuristico(paquete);
         }
 

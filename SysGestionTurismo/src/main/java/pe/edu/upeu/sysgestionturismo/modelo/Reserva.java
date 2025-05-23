@@ -16,6 +16,11 @@ public class Reserva {
     private LocalDate fechaFin;
     private Integer numeroPersonas;
 
+    private String tipoReserva;
+    private String estadoReserva;
+    private Double totalPago;
+    private String observaciones;
+
     @ManyToOne
     @JoinColumn(name = "idCliente")
     private Cliente cliente;
@@ -24,3 +29,4 @@ public class Reserva {
     @JoinColumn(name = "idPaquete")
     private PaqueteTuristico paqueteTuristico;
 }
+

@@ -2,10 +2,13 @@ package pe.edu.upeu.sysgestionturismo.control;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import pe.edu.upeu.sysgestionturismo.dtos.ReservaDto;
+import pe.edu.upeu.sysgestionturismo.mappers.ReservaMapper;
 import pe.edu.upeu.sysgestionturismo.modelo.Reserva;
 import pe.edu.upeu.sysgestionturismo.servicio.IReservaService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/reserva")
@@ -16,18 +19,24 @@ public class ReservaController {
     private IReservaService reservaService;
 
     @GetMapping("/listar")
-    public List<Reserva> listar() {
-        return reservaService.findAll();
+    public List<ReservaDto> listar() {
+        return reservaService.findAll().stream()
+                .map(ReservaMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/guardar")
-    public Reserva guardar(@RequestBody Reserva reserva) {
-        return reservaService.save(reserva);
+    public ReservaDto guardar(@RequestBody ReservaDto reservaDto) {
+        Reserva reserva = ReservaMapper.toEntity(reservaDto);
+        Reserva savedReserva = reservaService.save(reserva);
+        return ReservaMapper.toDto(savedReserva);
     }
 
     @PutMapping("/editar")
-    public Reserva editar(@RequestBody Reserva reserva) {
-        return reservaService.update(reserva);
+    public ReservaDto editar(@RequestBody ReservaDto reservaDto) {
+        Reserva reserva = ReservaMapper.toEntity(reservaDto);
+        Reserva updatedReserva = reservaService.update(reserva);
+        return ReservaMapper.toDto(updatedReserva);
     }
 
     @DeleteMapping("/eliminar/{id}")
@@ -36,7 +45,8 @@ public class ReservaController {
     }
 
     @GetMapping("/buscar/{id}")
-    public Reserva buscar(@PathVariable Long id) {
-        return reservaService.findById(id);
+    public ReservaDto buscar(@PathVariable Long id) {
+        Reserva reserva = reservaService.findById(id);
+        return ReservaMapper.toDto(reserva);
     }
 }

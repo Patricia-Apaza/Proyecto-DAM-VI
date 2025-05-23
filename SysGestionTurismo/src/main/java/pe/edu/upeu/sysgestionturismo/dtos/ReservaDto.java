@@ -5,11 +5,14 @@ import java.time.LocalDate;
 
 @Data
 public class ReservaDto {
-    private Long idReserva;
-    private LocalDate fechaReserva;
-    private LocalDate fechaInicio;
-    private LocalDate fechaFin;
-    private Integer numeroPersonas;
-    private Long idCliente;
-    private Long idPaquete;
+    private Long id_reserva;
+    private Long id_cliente;
+    private String tipo_reserva;
+    private Long id_paquete;
+    private String estado_reserva;
+    private LocalDate fecha_inicio;
+    private LocalDate fecha_fin;
+    private Integer numero_personas;
+    private Double total_pago;
+    private String observaciones;
 }
