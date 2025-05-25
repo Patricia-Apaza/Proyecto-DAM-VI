@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 23, 2025 at 01:03 PM
+-- Generation Time: May 25, 2025 at 09:18 AM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.16
 
@@ -58,11 +58,11 @@ INSERT INTO `actividad` (`id_actividad`, `nombre`, `descripcion`, `precio`, `id_
 CREATE TABLE `checkin` (
   `id_checkin` bigint NOT NULL,
   `id_reserva` bigint NOT NULL,
-  `tipo_reserva` varchar(30) NOT NULL,
+  `tipo_reserva` varchar(255) DEFAULT NULL,
   `fecha_checkin` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `estado_checkin` tinyint(1) DEFAULT '1',
-  `registrado_por` varchar(100) DEFAULT NULL,
-  `observacion` text
+  `registrado_por` varchar(255) DEFAULT NULL,
+  `observacion` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -70,7 +70,8 @@ CREATE TABLE `checkin` (
 --
 
 INSERT INTO `checkin` (`id_checkin`, `id_reserva`, `tipo_reserva`, `fecha_checkin`, `estado_checkin`, `registrado_por`, `observacion`) VALUES
-(1, 1, 'hospedaje', '2025-05-22 07:50:38', 1, 'admin@correo.com', 'Check-in sin inconvenientes');
+(1, 1, 'hospedaje', '2025-05-22 07:50:38', 1, 'admin@correo.com', 'Check-in sin inconvenientes'),
+(2, 2, 'Turismo', '2025-05-25 15:00:00', 1, 'Admin', 'Primer checkin de prueba');
 
 -- --------------------------------------------------------
 
@@ -80,20 +81,21 @@ INSERT INTO `checkin` (`id_checkin`, `id_reserva`, `tipo_reserva`, `fecha_checki
 
 CREATE TABLE `checkout` (
   `id_checkout` bigint NOT NULL,
-  `id_reserva` bigint NOT NULL,
-  `tipo_reserva` varchar(30) NOT NULL,
+  `id_checkin` bigint DEFAULT NULL,
+  `tipo_reserva` varchar(255) DEFAULT NULL,
   `fecha_checkout` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `estado_checkout` tinyint(1) DEFAULT '1',
-  `registrado_por` varchar(100) DEFAULT NULL,
-  `observacion` text
+  `registrado_por` varchar(255) DEFAULT NULL,
+  `observacion` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `checkout`
 --
 
-INSERT INTO `checkout` (`id_checkout`, `id_reserva`, `tipo_reserva`, `fecha_checkout`, `estado_checkout`, `registrado_por`, `observacion`) VALUES
-(1, 1, 'hospedaje', '2025-05-22 07:53:23', 1, 'admin@correo.com', 'Salida puntual, sin daños reportados');
+INSERT INTO `checkout` (`id_checkout`, `id_checkin`, `tipo_reserva`, `fecha_checkout`, `estado_checkout`, `registrado_por`, `observacion`) VALUES
+(1, NULL, 'hospedaje', '2025-05-22 07:53:23', 1, 'admin@correo.com', 'Salida puntual, sin daños reportados'),
+(2, NULL, 'Turismo', '2025-05-25 12:30:00', 1, 'admin', 'Checkout sin novedades');
 
 -- --------------------------------------------------------
 
@@ -630,9 +632,9 @@ INSERT INTO `reserva_restaurante` (`id_reserva_restaurante`, `id_reserva`, `id_r
 CREATE TABLE `restaurante` (
   `id_restaurante` bigint NOT NULL,
   `nombre` varchar(255) NOT NULL,
-  `descripcion` text,
+  `descripcion` varchar(255) DEFAULT NULL,
   `direccion` varchar(255) DEFAULT NULL,
-  `whatsapp_contacto` varchar(20) DEFAULT NULL,
+  `whatsapp_contacto` varchar(255) DEFAULT NULL,
   `id_destino` bigint DEFAULT NULL,
   `imagen_path` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -642,7 +644,8 @@ CREATE TABLE `restaurante` (
 --
 
 INSERT INTO `restaurante` (`id_restaurante`, `nombre`, `descripcion`, `direccion`, `whatsapp_contacto`, `id_destino`, `imagen_path`) VALUES
-(1, 'Sabores Andinos', 'Comida típica de la región con ingredientes frescos y locales.', 'Jr. Principal 123, Capachica', '+519876543210', 1, 'imagenes/restaurantes/sabores_andinos.jpg');
+(1, 'Sabores Andinos', 'Comida típica de la región con ingredientes frescos y locales.', 'Jr. Principal 123, Capachica', '+519876543210', 1, 'imagenes/restaurantes/sabores_andinos.jpg'),
+(2, 'Restaurante San Pedro', 'Comida criolla', 'Capachica', '942345675', 1, '/imagenes/restaurantes/1748090432745_restaurante.jpeg');
 
 -- --------------------------------------------------------
 
@@ -688,7 +691,7 @@ ALTER TABLE `checkin`
 --
 ALTER TABLE `checkout`
   ADD PRIMARY KEY (`id_checkout`),
-  ADD KEY `id_reserva` (`id_reserva`);
+  ADD KEY `fk_checkout_checkin` (`id_checkin`);
 
 --
 -- Indexes for table `cliente`
@@ -742,14 +745,14 @@ ALTER TABLE `inventario_paquete_turistico`
 --
 ALTER TABLE `inventario_restaurante`
   ADD PRIMARY KEY (`id_inventario_restaurante`),
-  ADD KEY `id_restaurante` (`id_restaurante`);
+  ADD KEY `inventario_restaurante_ibfk_1` (`id_restaurante`);
 
 --
 -- Indexes for table `menu_diario`
 --
 ALTER TABLE `menu_diario`
   ADD PRIMARY KEY (`id_menu`),
-  ADD KEY `id_restaurante` (`id_restaurante`);
+  ADD KEY `menu_diario_ibfk_1` (`id_restaurante`);
 
 --
 -- Indexes for table `pago`
@@ -787,8 +790,8 @@ ALTER TABLE `paquete_hospedaje`
 --
 ALTER TABLE `paquete_restaurante`
   ADD PRIMARY KEY (`id_paquete_restaurante`),
-  ADD KEY `id_restaurante` (`id_restaurante`),
-  ADD KEY `paquete_restaurante_ibfk_1` (`id_paquete_turistico`);
+  ADD KEY `paquete_restaurante_ibfk_1` (`id_paquete_turistico`),
+  ADD KEY `paquete_restaurante_ibfk_2` (`id_restaurante`);
 
 --
 -- Indexes for table `paquete_turistico`
@@ -862,7 +865,7 @@ ALTER TABLE `reserva_paquete_turistico`
 ALTER TABLE `reserva_restaurante`
   ADD PRIMARY KEY (`id_reserva_restaurante`),
   ADD KEY `id_reserva` (`id_reserva`),
-  ADD KEY `id_restaurante` (`id_restaurante`);
+  ADD KEY `reserva_restaurante_ibfk_2` (`id_restaurante`);
 
 --
 -- Indexes for table `restaurante`
@@ -887,6 +890,18 @@ ALTER TABLE `usuario`
 --
 ALTER TABLE `actividad`
   MODIFY `id_actividad` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT for table `checkin`
+--
+ALTER TABLE `checkin`
+  MODIFY `id_checkin` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `checkout`
+--
+ALTER TABLE `checkout`
+  MODIFY `id_checkout` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `cliente`
@@ -943,6 +958,12 @@ ALTER TABLE `reserva`
   MODIFY `id_reserva` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
+-- AUTO_INCREMENT for table `restaurante`
+--
+ALTER TABLE `restaurante`
+  MODIFY `id_restaurante` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `usuario`
 --
 ALTER TABLE `usuario`
@@ -968,7 +989,7 @@ ALTER TABLE `checkin`
 -- Constraints for table `checkout`
 --
 ALTER TABLE `checkout`
-  ADD CONSTRAINT `checkout_ibfk_1` FOREIGN KEY (`id_reserva`) REFERENCES `reserva` (`id_reserva`);
+  ADD CONSTRAINT `fk_checkout_checkin` FOREIGN KEY (`id_checkin`) REFERENCES `checkin` (`id_checkin`);
 
 --
 -- Constraints for table `hospedaje`
