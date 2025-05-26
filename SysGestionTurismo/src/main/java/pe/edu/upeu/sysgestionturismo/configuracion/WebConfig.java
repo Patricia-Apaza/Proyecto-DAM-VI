@@ -37,5 +37,10 @@ public class WebConfig implements WebMvcConfigurer {
         String uploadPathRestaurantes = System.getProperty("user.dir") + "/uploads/restaurantes/";
         registry.addResourceHandler("/imagenes/restaurantes/**")
                 .addResourceLocations("file:" + uploadPathRestaurantes);
+
+        // Para menús diarios
+        String uploadPathMenus = System.getProperty("user.dir") + "/uploads/menus/";
+        registry.addResourceHandler("/imagenes/menus/**")
+                .addResourceLocations("file:" + uploadPathMenus);
     }
 }

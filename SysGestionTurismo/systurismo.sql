@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 25, 2025 at 09:18 AM
+-- Generation Time: May 26, 2025 at 09:37 AM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.16
 
@@ -95,7 +95,8 @@ CREATE TABLE `checkout` (
 
 INSERT INTO `checkout` (`id_checkout`, `id_checkin`, `tipo_reserva`, `fecha_checkout`, `estado_checkout`, `registrado_por`, `observacion`) VALUES
 (1, NULL, 'hospedaje', '2025-05-22 07:53:23', 1, 'admin@correo.com', 'Salida puntual, sin daños reportados'),
-(2, NULL, 'Turismo', '2025-05-25 12:30:00', 1, 'admin', 'Checkout sin novedades');
+(2, NULL, 'Turismo', '2025-05-25 12:30:00', 1, 'admin', 'Checkout sin novedades'),
+(3, 1, 'Hotel', '2025-05-25 10:30:00', 1, 'usuario1', 'Salida temprana');
 
 -- --------------------------------------------------------
 
@@ -213,23 +214,24 @@ INSERT INTO `inventario` (`id_inventario`, `nombre_item`, `cantidad_disponible`,
 CREATE TABLE `inventario_actividad` (
   `id_inventario_actividad` bigint NOT NULL,
   `id_actividad` bigint DEFAULT NULL,
-  `nombre_actividad` varchar(100) NOT NULL,
+  `nombre_actividad` varchar(255) DEFAULT NULL,
   `fecha_sesion` date NOT NULL,
   `hora_inicio` time NOT NULL,
   `hora_fin` time NOT NULL,
   `capacidad_personas` int NOT NULL,
   `personas_registradas` int DEFAULT '0',
-  `precio_por_persona` decimal(10,2) NOT NULL,
-  `descripcion` text,
-  `cantidad_disponible` int DEFAULT '0'
+  `cantidad_disponible` int DEFAULT NULL,
+  `precio_por_persona` decimal(38,2) DEFAULT NULL,
+  `descripcion` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `inventario_actividad`
 --
 
-INSERT INTO `inventario_actividad` (`id_inventario_actividad`, `id_actividad`, `nombre_actividad`, `fecha_sesion`, `hora_inicio`, `hora_fin`, `capacidad_personas`, `personas_registradas`, `precio_por_persona`, `descripcion`, `cantidad_disponible`) VALUES
-(1, 1, 'Caminata ecológica', '2025-06-10', '08:00:00', '11:00:00', 20, 5, 25.00, 'Recorrido por senderos naturales guiado por expertos.', 15);
+INSERT INTO `inventario_actividad` (`id_inventario_actividad`, `id_actividad`, `nombre_actividad`, `fecha_sesion`, `hora_inicio`, `hora_fin`, `capacidad_personas`, `personas_registradas`, `cantidad_disponible`, `precio_por_persona`, `descripcion`) VALUES
+(1, 1, 'Escalada en roca - nivel avanzado', '2025-05-31', '13:00:00', '16:00:00', 15, 5, 10, 75.00, 'Sesión avanzada para escaladores con experiencia.'),
+(2, 1, 'Escalada en montaña', '2025-05-31', '13:00:00', '16:00:00', 15, 5, 10, 75.00, 'Sesión avanzada para escaladores con experiencia.');
 
 -- --------------------------------------------------------
 
@@ -240,21 +242,23 @@ INSERT INTO `inventario_actividad` (`id_inventario_actividad`, `id_actividad`, `
 CREATE TABLE `inventario_hospedaje` (
   `id_inventario_hospedaje` bigint NOT NULL,
   `id_hospedaje` bigint DEFAULT NULL,
-  `tipo_cuarto` varchar(50) NOT NULL,
-  `cantidad_total` int NOT NULL,
-  `cantidad_disponible` int NOT NULL,
-  `tipo_cama` varchar(50) DEFAULT NULL,
+  `tipo_cuarto` varchar(255) DEFAULT NULL,
+  `tipo_cama` varchar(255) DEFAULT NULL,
   `bano_privado` tinyint(1) DEFAULT '1',
-  `precio_por_noche` decimal(10,2) NOT NULL,
-  `descripcion` text
+  `precio_por_noche` double DEFAULT NULL,
+  `descripcion` varchar(255) DEFAULT NULL,
+  `cantidad_total` int NOT NULL,
+  `cantidad_disponible` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `inventario_hospedaje`
 --
 
-INSERT INTO `inventario_hospedaje` (`id_inventario_hospedaje`, `id_hospedaje`, `tipo_cuarto`, `cantidad_total`, `cantidad_disponible`, `tipo_cama`, `bano_privado`, `precio_por_noche`, `descripcion`) VALUES
-(1, 1, 'Matrimonial', 10, 10, 'Queen', 1, 150.00, 'Habitación cómoda con vista al lago');
+INSERT INTO `inventario_hospedaje` (`id_inventario_hospedaje`, `id_hospedaje`, `tipo_cuarto`, `tipo_cama`, `bano_privado`, `precio_por_noche`, `descripcion`, `cantidad_total`, `cantidad_disponible`) VALUES
+(1, 1, 'Matrimonial', 'Queen', 1, 150, 'Habitación cómoda con vista al lago', 10, 10),
+(2, 1, 'Suite doble', 'Queen', 1, 120.5, 'Suite con vista al mar, aire acondicionado y baño privado', 10, 5),
+(3, 1, 'Una plaza', 'Queen', 1, 120.5, 'Suite con vista al mar, aire acondicionado y baño privado', 10, 5);
 
 -- --------------------------------------------------------
 
@@ -270,8 +274,8 @@ CREATE TABLE `inventario_paquete_turistico` (
   `hora_salida` time NOT NULL,
   `capacidad_personas` int NOT NULL,
   `personas_registradas` int DEFAULT '0',
-  `precio_por_persona` decimal(10,2) NOT NULL,
-  `descripcion` text,
+  `precio_por_persona` decimal(38,2) DEFAULT NULL,
+  `descripcion` varchar(255) DEFAULT NULL,
   `imagen_path` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -280,7 +284,9 @@ CREATE TABLE `inventario_paquete_turistico` (
 --
 
 INSERT INTO `inventario_paquete_turistico` (`id_inventario_paquete_turistico`, `id_paquete_turistico`, `fecha_salida`, `fecha_retorno`, `hora_salida`, `capacidad_personas`, `personas_registradas`, `precio_por_persona`, `descripcion`, `imagen_path`) VALUES
-(1, 1, '2025-06-10', '2025-06-12', '08:00:00', 20, 0, 250.00, 'Paquete todo incluido: actividades, hospedaje y alimentación', NULL);
+(1, 1, '2025-06-10', '2025-06-12', '08:00:00', 20, 0, 250.00, 'Paquete todo incluido: actividades, hospedaje y alimentación', NULL),
+(2, 1, '2025-07-10', '2025-07-15', '08:00:00', 30, 0, 899.99, 'Paquete completo al Cañón del Colca con hospedaje incluido.', 'https://mi-servidor.com/imagenes/colca.jpg'),
+(3, 1, '2025-07-10', '2025-07-15', '08:00:00', 30, 0, 899.99, 'Paquete completo al Cañón del Colca con hospedaje incluido.', 'https://mi-servidor.com/imagenes/colca.jpg');
 
 -- --------------------------------------------------------
 
@@ -291,16 +297,24 @@ INSERT INTO `inventario_paquete_turistico` (`id_inventario_paquete_turistico`, `
 CREATE TABLE `inventario_restaurante` (
   `id_inventario_restaurante` bigint NOT NULL,
   `id_restaurante` bigint DEFAULT NULL,
-  `tipo_producto` varchar(50) NOT NULL,
-  `nombre_producto` varchar(100) NOT NULL,
+  `tipo_producto` varchar(255) DEFAULT NULL,
+  `nombre_producto` varchar(255) DEFAULT NULL,
   `cantidad_disponible_producto` int DEFAULT '0',
   `cantidad_total_producto` int DEFAULT '0',
   `total_mesas` int DEFAULT '0',
   `mesas_disponibles` int DEFAULT '0',
   `capacidad_por_mesa` int DEFAULT '4',
-  `precio` decimal(10,2) DEFAULT NULL,
-  `observaciones` text
+  `precio` double DEFAULT NULL,
+  `observaciones` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `inventario_restaurante`
+--
+
+INSERT INTO `inventario_restaurante` (`id_inventario_restaurante`, `id_restaurante`, `tipo_producto`, `nombre_producto`, `cantidad_disponible_producto`, `cantidad_total_producto`, `total_mesas`, `mesas_disponibles`, `capacidad_por_mesa`, `precio`, `observaciones`) VALUES
+(1, 1, 'Bebida', 'Cerveza Artesanal', 50, 100, 20, 15, 4, 12.5, 'Producto nuevo en carta'),
+(2, 1, 'Plato', 'Trucha Frita', 50, 100, 20, 15, 4, 12.5, 'Producto nuevo en carta');
 
 -- --------------------------------------------------------
 
@@ -312,11 +326,19 @@ CREATE TABLE `menu_diario` (
   `id_menu` bigint NOT NULL,
   `id_restaurante` bigint DEFAULT NULL,
   `fecha` date NOT NULL,
-  `nombre_plato` varchar(100) NOT NULL,
-  `descripcion` text,
-  `precio` decimal(10,2) DEFAULT NULL,
+  `nombre_plato` varchar(255) DEFAULT NULL,
+  `descripcion` varchar(255) DEFAULT NULL,
+  `precio` decimal(38,2) DEFAULT NULL,
   `imagen_path` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `menu_diario`
+--
+
+INSERT INTO `menu_diario` (`id_menu`, `id_restaurante`, `fecha`, `nombre_plato`, `descripcion`, `precio`, `imagen_path`) VALUES
+(1, 1, '2025-05-26', 'Trucha frita', 'Sacado del lago', 20.00, '/imagenes/menus/1748247931131_trucha-frita_web.jpg'),
+(2, 1, '2025-05-26', 'Trucha ', 'Sacado del lago', 20.00, '/imagenes/menus/1748247982632_trucha-frita_web.jpg');
 
 -- --------------------------------------------------------
 
@@ -349,16 +371,18 @@ INSERT INTO `pago` (`id_pago`, `monto`, `metodo_pago`, `fecha_pago`, `id_reserva
 CREATE TABLE `paquete_actividad` (
   `id_paquete_actividad` bigint NOT NULL,
   `id_paquete_turistico` bigint NOT NULL,
-  `id_actividad` bigint NOT NULL,
-  `id_paquete` bigint NOT NULL
+  `id_actividad` bigint NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `paquete_actividad`
 --
 
-INSERT INTO `paquete_actividad` (`id_paquete_actividad`, `id_paquete_turistico`, `id_actividad`, `id_paquete`) VALUES
-(1, 1, 1, 0);
+INSERT INTO `paquete_actividad` (`id_paquete_actividad`, `id_paquete_turistico`, `id_actividad`) VALUES
+(1, 1, 1),
+(2, 2, 2),
+(3, 2, 1),
+(4, 1, 2);
 
 -- --------------------------------------------------------
 
@@ -372,6 +396,15 @@ CREATE TABLE `paquete_destino` (
   `id_destino` bigint NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Dumping data for table `paquete_destino`
+--
+
+INSERT INTO `paquete_destino` (`id_paquete_destino`, `id_paquete_turistico`, `id_destino`) VALUES
+(2, 1, 1),
+(4, 1, 15),
+(5, 1, 18);
+
 -- --------------------------------------------------------
 
 --
@@ -384,6 +417,14 @@ CREATE TABLE `paquete_hospedaje` (
   `id_hospedaje` bigint NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Dumping data for table `paquete_hospedaje`
+--
+
+INSERT INTO `paquete_hospedaje` (`id_paquete_hospedaje`, `id_paquete_turistico`, `id_hospedaje`) VALUES
+(1, 1, 2),
+(2, 1, 2);
+
 -- --------------------------------------------------------
 
 --
@@ -395,6 +436,14 @@ CREATE TABLE `paquete_restaurante` (
   `id_paquete_turistico` bigint NOT NULL,
   `id_restaurante` bigint NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `paquete_restaurante`
+--
+
+INSERT INTO `paquete_restaurante` (`id_paquete_restaurante`, `id_paquete_turistico`, `id_restaurante`) VALUES
+(1, 1, 2),
+(2, 1, 2);
 
 -- --------------------------------------------------------
 
@@ -491,7 +540,7 @@ CREATE TABLE `reserva_actividad` (
   `cantidad_personas` int NOT NULL,
   `incluye_ninos` tinyint(1) DEFAULT '0',
   `cantidad_ninos` int DEFAULT '0',
-  `estado_reserva` varchar(50) DEFAULT 'pendiente',
+  `estado_reserva` varchar(255) DEFAULT NULL,
   `fecha_reserva` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -500,7 +549,8 @@ CREATE TABLE `reserva_actividad` (
 --
 
 INSERT INTO `reserva_actividad` (`id_reserva_actividad`, `id_reserva`, `id_inventario_actividad`, `disponible`, `cantidad_personas`, `incluye_ninos`, `cantidad_ninos`, `estado_reserva`, `fecha_reserva`) VALUES
-(1, 1, 1, 1, 2, 1, 1, 'pendiente', '2025-05-22 08:05:37');
+(1, 1, 2, 1, 4, 1, 1, 'confirmado', '2025-05-25 10:00:00'),
+(2, 1, 2, 1, 2, 1, 1, 'confirmado', '2025-05-25 10:00:00');
 
 -- --------------------------------------------------------
 
@@ -520,7 +570,7 @@ CREATE TABLE `reserva_hospedaje` (
   `incluye_ninos` tinyint(1) DEFAULT '0',
   `cantidad_ninos` int DEFAULT '0',
   `incluye_desayuno` tinyint(1) DEFAULT '0',
-  `estado_reserva` varchar(50) DEFAULT 'pendiente'
+  `estado_reserva` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -528,7 +578,9 @@ CREATE TABLE `reserva_hospedaje` (
 --
 
 INSERT INTO `reserva_hospedaje` (`id_reserva_hospedaje`, `id_reserva`, `id_inventario_hospedaje`, `disponible`, `fecha_inicio`, `fecha_fin`, `cantidad_habitaciones`, `cantidad_personas`, `incluye_ninos`, `cantidad_ninos`, `incluye_desayuno`, `estado_reserva`) VALUES
-(1, 1, 1, 1, '2025-06-01 05:00:00', '2025-06-03 05:00:00', 1, 2, 1, 1, 0, 'pendiente');
+(1, 1, 1, 1, '2025-06-01 05:00:00', '2025-06-03 05:00:00', 1, 2, 1, 1, 0, 'pendiente'),
+(2, 1, 2, 1, '2025-06-10 14:00:00', '2025-06-12 12:00:00', 2, 4, 1, 2, 1, 'confirmado'),
+(3, 1, 2, 1, '2025-06-10 14:00:00', '2025-06-12 12:00:00', 2, 4, 1, 2, 1, 'confirmado');
 
 -- --------------------------------------------------------
 
@@ -542,8 +594,16 @@ CREATE TABLE `reserva_menu` (
   `id_menu` bigint DEFAULT NULL,
   `disponible` tinyint(1) DEFAULT '1',
   `cantidad` int NOT NULL DEFAULT '1',
-  `observaciones` text
+  `observaciones` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `reserva_menu`
+--
+
+INSERT INTO `reserva_menu` (`id_reserva_menu`, `id_reserva_restaurante`, `id_menu`, `disponible`, `cantidad`, `observaciones`) VALUES
+(3, 1, 1, 1, 3, 'Pedido para 3 personas'),
+(4, 1, 1, 1, 3, 'Pedido para 5 personas');
 
 -- --------------------------------------------------------
 
@@ -557,21 +617,24 @@ CREATE TABLE `reserva_ninos` (
   `id_reserva_actividad` bigint DEFAULT NULL,
   `id_reserva_paquete` bigint DEFAULT NULL,
   `id_reserva_restaurante` bigint DEFAULT NULL,
-  `nombre` varchar(100) NOT NULL,
-  `apellido` varchar(100) DEFAULT NULL,
+  `nombre` varchar(255) NOT NULL,
+  `apellido` varchar(255) DEFAULT NULL,
   `edad` int NOT NULL,
-  `num_documento` varchar(20) DEFAULT NULL,
+  `tipo_documento` varchar(255) DEFAULT NULL,
+  `num_documento` varchar(255) DEFAULT NULL,
   `direccion` text,
-  `registrado_por_cliente_id` bigint NOT NULL,
-  `tipo_documento` varchar(20) DEFAULT NULL
+  `registrado_por_cliente_id` bigint NOT NULL
 ) ;
 
 --
 -- Dumping data for table `reserva_ninos`
 --
 
-INSERT INTO `reserva_ninos` (`id_reserva_ninos`, `id_reserva_hospedaje`, `id_reserva_actividad`, `id_reserva_paquete`, `id_reserva_restaurante`, `nombre`, `apellido`, `edad`, `num_documento`, `direccion`, `registrado_por_cliente_id`, `tipo_documento`) VALUES
-(1, NULL, NULL, 1, NULL, 'Ana', 'Gómez', 8, '123456', 'Jr. Principal 123', 1, 'DNI');
+INSERT INTO `reserva_ninos` (`id_reserva_ninos`, `id_reserva_hospedaje`, `id_reserva_actividad`, `id_reserva_paquete`, `id_reserva_restaurante`, `nombre`, `apellido`, `edad`, `tipo_documento`, `num_documento`, `direccion`, `registrado_por_cliente_id`) VALUES
+(1, NULL, NULL, 1, NULL, 'Ana', 'Gómez', 8, 'DNI', '123456', 'Jr. Principal 123', 1),
+(2, 1, 2, 3, 4, 'Juan', 'Perez', 5, 'DNI', '12345678', 'Calle Falsa 123', 10),
+(4, 1, 1, 3, 4, 'Juan', 'Perez', 5, 'DNI', '12345678', 'Calle Falsa 123', 10),
+(5, NULL, NULL, 3, 4, 'Juan', 'Perez', 5, 'DNI', '12345678', 'Calle Falsa 123', 10);
 
 -- --------------------------------------------------------
 
@@ -587,7 +650,7 @@ CREATE TABLE `reserva_paquete_turistico` (
   `cantidad_personas` int NOT NULL,
   `incluye_ninos` tinyint(1) DEFAULT '0',
   `cantidad_ninos` int DEFAULT '0',
-  `estado_reserva` varchar(50) DEFAULT 'pendiente',
+  `estado_reserva` varchar(255) DEFAULT NULL,
   `fecha_reserva` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -596,7 +659,9 @@ CREATE TABLE `reserva_paquete_turistico` (
 --
 
 INSERT INTO `reserva_paquete_turistico` (`id_reserva_paquete_turistico`, `id_reserva`, `id_inventario_paquete`, `disponible`, `cantidad_personas`, `incluye_ninos`, `cantidad_ninos`, `estado_reserva`, `fecha_reserva`) VALUES
-(1, 1, 1, 1, 3, 1, 1, 'pendiente', '2025-05-22 08:07:19');
+(1, 1, 1, 1, 3, 1, 1, 'pendiente', '2025-05-22 08:07:19'),
+(2, 1, 2, 1, 4, 1, 2, 'pendiente', '2025-05-25 10:30:00'),
+(3, 1, 2, 1, 4, 1, 2, 'confirmado', '2025-05-25 10:30:00');
 
 -- --------------------------------------------------------
 
@@ -621,7 +686,10 @@ CREATE TABLE `reserva_restaurante` (
 --
 
 INSERT INTO `reserva_restaurante` (`id_reserva_restaurante`, `id_reserva`, `id_restaurante`, `fecha`, `hora`, `cantidad_personas`, `incluye_ninos`, `cantidad_ninos`, `estado`) VALUES
-(1, 1, 1, '2025-06-05', '13:00:00', 4, 1, 2, 'Pendiente');
+(1, 1, 1, '2025-06-05', '13:00:00', 4, 1, 2, 'Pendiente'),
+(2, 1, 2, '2025-05-29', '19:30:00', 4, 1, 2, 'Pendiente'),
+(3, 1, 2, '2025-05-29', '19:30:00', 4, 1, 2, 'confirmado'),
+(4, 1, 2, '2025-05-29', '19:30:00', 4, 0, 0, 'confirmado');
 
 -- --------------------------------------------------------
 
@@ -822,7 +890,7 @@ ALTER TABLE `reserva`
 ALTER TABLE `reserva_actividad`
   ADD PRIMARY KEY (`id_reserva_actividad`),
   ADD KEY `id_reserva` (`id_reserva`),
-  ADD KEY `id_inventario_actividad` (`id_inventario_actividad`);
+  ADD KEY `reserva_actividad_ibfk_2` (`id_inventario_actividad`);
 
 --
 -- Indexes for table `reserva_hospedaje`
@@ -830,26 +898,26 @@ ALTER TABLE `reserva_actividad`
 ALTER TABLE `reserva_hospedaje`
   ADD PRIMARY KEY (`id_reserva_hospedaje`),
   ADD KEY `id_reserva` (`id_reserva`),
-  ADD KEY `id_inventario_hospedaje` (`id_inventario_hospedaje`);
+  ADD KEY `reserva_hospedaje_ibfk_2` (`id_inventario_hospedaje`);
 
 --
 -- Indexes for table `reserva_menu`
 --
 ALTER TABLE `reserva_menu`
   ADD PRIMARY KEY (`id_reserva_menu`),
-  ADD KEY `id_reserva_restaurante` (`id_reserva_restaurante`),
-  ADD KEY `id_menu` (`id_menu`);
+  ADD KEY `reserva_menu_ibfk_1` (`id_reserva_restaurante`),
+  ADD KEY `reserva_menu_ibfk_2` (`id_menu`);
 
 --
 -- Indexes for table `reserva_ninos`
 --
 ALTER TABLE `reserva_ninos`
   ADD PRIMARY KEY (`id_reserva_ninos`),
-  ADD KEY `id_reserva_hospedaje` (`id_reserva_hospedaje`),
-  ADD KEY `id_reserva_actividad` (`id_reserva_actividad`),
-  ADD KEY `id_reserva_paquete` (`id_reserva_paquete`),
-  ADD KEY `id_reserva_restaurante` (`id_reserva_restaurante`),
-  ADD KEY `registrado_por_cliente_id` (`registrado_por_cliente_id`);
+  ADD KEY `registrado_por_cliente_id` (`registrado_por_cliente_id`),
+  ADD KEY `reserva_ninos_ibfk_2` (`id_reserva_actividad`),
+  ADD KEY `reserva_ninos_ibfk_1` (`id_reserva_hospedaje`),
+  ADD KEY `fk_reserva_ninos_paquete` (`id_reserva_paquete`),
+  ADD KEY `reserva_ninos_ibfk_4` (`id_reserva_restaurante`);
 
 --
 -- Indexes for table `reserva_paquete_turistico`
@@ -857,7 +925,7 @@ ALTER TABLE `reserva_ninos`
 ALTER TABLE `reserva_paquete_turistico`
   ADD PRIMARY KEY (`id_reserva_paquete_turistico`),
   ADD KEY `id_reserva` (`id_reserva`),
-  ADD KEY `id_inventario_paquete` (`id_inventario_paquete`);
+  ADD KEY `fk_reserva_paquete_inventario` (`id_inventario_paquete`);
 
 --
 -- Indexes for table `reserva_restaurante`
@@ -901,7 +969,7 @@ ALTER TABLE `checkin`
 -- AUTO_INCREMENT for table `checkout`
 --
 ALTER TABLE `checkout`
-  MODIFY `id_checkout` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_checkout` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `cliente`
@@ -928,6 +996,36 @@ ALTER TABLE `inventario`
   MODIFY `id_inventario` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `inventario_actividad`
+--
+ALTER TABLE `inventario_actividad`
+  MODIFY `id_inventario_actividad` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `inventario_hospedaje`
+--
+ALTER TABLE `inventario_hospedaje`
+  MODIFY `id_inventario_hospedaje` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `inventario_paquete_turistico`
+--
+ALTER TABLE `inventario_paquete_turistico`
+  MODIFY `id_inventario_paquete_turistico` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `inventario_restaurante`
+--
+ALTER TABLE `inventario_restaurante`
+  MODIFY `id_inventario_restaurante` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `menu_diario`
+--
+ALTER TABLE `menu_diario`
+  MODIFY `id_menu` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `pago`
 --
 ALTER TABLE `pago`
@@ -937,7 +1035,25 @@ ALTER TABLE `pago`
 -- AUTO_INCREMENT for table `paquete_actividad`
 --
 ALTER TABLE `paquete_actividad`
-  MODIFY `id_paquete_actividad` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_paquete_actividad` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `paquete_destino`
+--
+ALTER TABLE `paquete_destino`
+  MODIFY `id_paquete_destino` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `paquete_hospedaje`
+--
+ALTER TABLE `paquete_hospedaje`
+  MODIFY `id_paquete_hospedaje` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `paquete_restaurante`
+--
+ALTER TABLE `paquete_restaurante`
+  MODIFY `id_paquete_restaurante` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `paquete_turistico`
@@ -956,6 +1072,42 @@ ALTER TABLE `resena`
 --
 ALTER TABLE `reserva`
   MODIFY `id_reserva` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `reserva_actividad`
+--
+ALTER TABLE `reserva_actividad`
+  MODIFY `id_reserva_actividad` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `reserva_hospedaje`
+--
+ALTER TABLE `reserva_hospedaje`
+  MODIFY `id_reserva_hospedaje` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `reserva_menu`
+--
+ALTER TABLE `reserva_menu`
+  MODIFY `id_reserva_menu` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `reserva_ninos`
+--
+ALTER TABLE `reserva_ninos`
+  MODIFY `id_reserva_ninos` bigint NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `reserva_paquete_turistico`
+--
+ALTER TABLE `reserva_paquete_turistico`
+  MODIFY `id_reserva_paquete_turistico` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `reserva_restaurante`
+--
+ALTER TABLE `reserva_restaurante`
+  MODIFY `id_reserva_restaurante` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `restaurante`
@@ -1112,9 +1264,9 @@ ALTER TABLE `reserva_menu`
 -- Constraints for table `reserva_ninos`
 --
 ALTER TABLE `reserva_ninos`
+  ADD CONSTRAINT `fk_reserva_ninos_paquete` FOREIGN KEY (`id_reserva_paquete`) REFERENCES `reserva_paquete_turistico` (`id_reserva_paquete_turistico`),
   ADD CONSTRAINT `reserva_ninos_ibfk_1` FOREIGN KEY (`id_reserva_hospedaje`) REFERENCES `reserva_hospedaje` (`id_reserva_hospedaje`),
   ADD CONSTRAINT `reserva_ninos_ibfk_2` FOREIGN KEY (`id_reserva_actividad`) REFERENCES `reserva_actividad` (`id_reserva_actividad`),
-  ADD CONSTRAINT `reserva_ninos_ibfk_3` FOREIGN KEY (`id_reserva_paquete`) REFERENCES `reserva_paquete_turistico` (`id_reserva_paquete_turistico`),
   ADD CONSTRAINT `reserva_ninos_ibfk_4` FOREIGN KEY (`id_reserva_restaurante`) REFERENCES `reserva_restaurante` (`id_reserva_restaurante`),
   ADD CONSTRAINT `reserva_ninos_ibfk_5` FOREIGN KEY (`registrado_por_cliente_id`) REFERENCES `cliente` (`id_cliente`);
 
@@ -1122,8 +1274,8 @@ ALTER TABLE `reserva_ninos`
 -- Constraints for table `reserva_paquete_turistico`
 --
 ALTER TABLE `reserva_paquete_turistico`
-  ADD CONSTRAINT `reserva_paquete_turistico_ibfk_1` FOREIGN KEY (`id_reserva`) REFERENCES `reserva` (`id_reserva`),
-  ADD CONSTRAINT `reserva_paquete_turistico_ibfk_2` FOREIGN KEY (`id_inventario_paquete`) REFERENCES `inventario_paquete_turistico` (`id_inventario_paquete_turistico`);
+  ADD CONSTRAINT `fk_reserva_paquete_inventario` FOREIGN KEY (`id_inventario_paquete`) REFERENCES `inventario_paquete_turistico` (`id_inventario_paquete_turistico`),
+  ADD CONSTRAINT `reserva_paquete_turistico_ibfk_1` FOREIGN KEY (`id_reserva`) REFERENCES `reserva` (`id_reserva`);
 
 --
 -- Constraints for table `reserva_restaurante`
