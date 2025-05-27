@@ -1,10 +1,15 @@
 package pe.edu.upeu.systurismojpc.repository
 
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import pe.edu.upeu.systurismojpc.data.remote.RestActividad
 import pe.edu.upeu.systurismojpc.modelo.ActividadDto
 import pe.edu.upeu.systurismojpc.modelo.ActividadResp
-import pe.edu.upeu.systurismojpc.modelo.DestinoResp
 import pe.edu.upeu.systurismojpc.utils.TokenUtils
+import java.io.File
 import javax.inject.Inject
 
 class ActividadRepositoryImp @Inject constructor(
@@ -28,7 +33,6 @@ class ActividadRepositoryImp @Inject constructor(
 
     override suspend fun insertarActividad(actividad: ActividadDto): Boolean {
         val response = restActividad.insertarActividad(TokenUtils.TOKEN_CONTENT, actividad)
-        println("Insertar actividad - Código: ${response.code()}, Body: ${response.body()}, Error: ${response.errorBody()?.string()}")
         return response.isSuccessful && response.body()?.idActividad != null
     }
 
@@ -37,8 +41,35 @@ class ActividadRepositoryImp @Inject constructor(
         return response.isSuccessful && response.body()?.idActividad != null
     }
 
-    override suspend fun obtenerDestinos(): List<DestinoResp> {
-        val response = restActividad.obtenerDestinos(TokenUtils.TOKEN_CONTENT)
-        return if (response.isSuccessful) response.body() ?: emptyList() else emptyList()
+    override suspend fun insertarActividadConImagen(
+        idDestino: Long,
+        nombre: String,
+        descripcion: String,
+        nivelRiesgo: String,
+        whatsappContacto: String,
+        precio: Double,
+        imageFile: File
+    ): Boolean {
+        val requestFile = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
+        val body = MultipartBody.Part.createFormData("imagen", imageFile.name, requestFile)
+
+        val idDestinoPart = MultipartBody.Part.createFormData("idDestino", idDestino.toString())
+        val nombrePart = MultipartBody.Part.createFormData("nombre", nombre)
+        val descripcionPart = MultipartBody.Part.createFormData("descripcion", descripcion)
+        val nivelRiesgoPart = MultipartBody.Part.createFormData("nivelRiesgo", nivelRiesgo)
+        val whatsappPart = MultipartBody.Part.createFormData("whatsappContacto", whatsappContacto)
+        val precioPart = MultipartBody.Part.createFormData("precio", precio.toString())
+
+        val response = restActividad.insertarActividadConImagen(
+            TokenUtils.TOKEN_CONTENT,
+            idDestinoPart,
+            nombrePart,
+            descripcionPart,
+            nivelRiesgoPart,
+            whatsappPart,
+            precioPart,
+            body
+        )
+        return response.isSuccessful
     }
 }

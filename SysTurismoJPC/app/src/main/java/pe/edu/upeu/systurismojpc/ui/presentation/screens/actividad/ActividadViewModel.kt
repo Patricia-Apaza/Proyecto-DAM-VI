@@ -1,5 +1,7 @@
 package pe.edu.upeu.systurismojpc.ui.presentation.screens.actividad
 
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -8,32 +10,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import pe.edu.upeu.systurismojpc.modelo.ActividadDto
 import pe.edu.upeu.systurismojpc.modelo.ActividadResp
-import pe.edu.upeu.systurismojpc.modelo.DestinoResp
 import pe.edu.upeu.systurismojpc.repository.ActividadRepository
-import pe.edu.upeu.systurismojpc.repository.DestinoRepository
+import pe.edu.upeu.systurismojpc.utils.FileUtils
 import javax.inject.Inject
 
 @HiltViewModel
 class ActividadViewModel @Inject constructor(
-    private val actividadRepository: ActividadRepository,
-    private val destinoRepository: DestinoRepository
+    private val actividadRepository: ActividadRepository
 ) : ViewModel() {
 
     private val _lista = MutableStateFlow<List<ActividadResp>>(emptyList())
     val lista: StateFlow<List<ActividadResp>> = _lista
 
-    private val _destinos = MutableStateFlow<List<DestinoResp>>(emptyList())
-    val destinos: StateFlow<List<DestinoResp>> = _destinos
-
     fun getActividades() {
         viewModelScope.launch {
             _lista.value = actividadRepository.reportarActividades()
-        }
-    }
-
-    fun obtenerDestinos() {
-        viewModelScope.launch {
-            _destinos.value = destinoRepository.reportarDestinos()
         }
     }
 
@@ -47,22 +38,48 @@ class ActividadViewModel @Inject constructor(
 
     fun guardarActividad(actividad: ActividadDto, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
-            val rpta = actividadRepository.insertarActividad(actividad)
-            println("Respuesta insertar: $rpta")
-            onResult(rpta)
-            if (rpta) getActividades()
+            onResult(actividadRepository.insertarActividad(actividad))
         }
     }
 
     fun modificarActividad(actividad: ActividadDto, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
-            val rpta = actividadRepository.modificarActividad(actividad)
-            onResult(rpta)
-            if (rpta) getActividades()
+            onResult(actividadRepository.modificarActividad(actividad))
         }
     }
 
     suspend fun buscarActividad(id: Long): ActividadResp {
         return actividadRepository.buscarActividadId(id)
+    }
+
+    fun guardarActividadConImagen(
+        context: Context,
+        idDestino: Long,
+        nombre: String,
+        descripcion: String,
+        nivelRiesgo: String,
+        whatsappContacto: String,
+        precio: Double,
+        imagenUri: Uri,
+        onResult: (Boolean) -> Unit
+    ) {
+        viewModelScope.launch {
+            val file = FileUtils.getFileFromUri(context, imagenUri)
+            if (file != null) {
+                val resultado = actividadRepository.insertarActividadConImagen(
+                    idDestino,
+                    nombre,
+                    descripcion,
+                    nivelRiesgo,
+                    whatsappContacto,
+                    precio,
+                    file
+                )
+                onResult(resultado)
+                getActividades()
+            } else {
+                onResult(false)
+            }
+        }
     }
 }

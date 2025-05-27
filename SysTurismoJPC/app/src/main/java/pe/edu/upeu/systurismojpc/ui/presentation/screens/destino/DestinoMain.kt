@@ -102,7 +102,7 @@ fun DestinoMainScreen(
                         Text(text = destino.descripcion, style = MaterialTheme.typography.bodyMedium)
                         Text(text = destino.ubicacion, style = MaterialTheme.typography.bodySmall)
 
-                        // ✅ Mostrar la imagen desde el backend
+                        // Mostrar la imagen desde el backend
                         MostrarImagenDesdePath(imagenPath = destino.imagenPath)
 
                         Row(
