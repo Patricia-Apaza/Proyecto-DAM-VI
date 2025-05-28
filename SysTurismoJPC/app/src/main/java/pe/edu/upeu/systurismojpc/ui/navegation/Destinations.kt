@@ -52,4 +52,13 @@ sealed class Destinations(
             return "actividadForm?actividadId=${actividadId ?: ""}"
         }
     }
+
+    object HospedajeMainSC: Destinations("hospedajeMain", "Adm. Hospedajes", Icons.Filled.Home)
+
+    object HospedajeFormSC: Destinations("hospedajeForm?hospedajeId={hospedajeId}", "Form Hospedaje", Icons.Filled.Add) {
+        fun passId(hospedajeId: String?): String {
+            return "hospedajeForm?hospedajeId=${hospedajeId ?: ""}"
+        }
+    }
+
 }

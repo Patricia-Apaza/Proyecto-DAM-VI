@@ -33,6 +33,9 @@ fun MostrarImagenActividadDesdePath(imagenPath: String?) {
         imagenPath.startsWith("http") -> imagenPath
         imagenPath.startsWith("/imagenes/") -> "http://10.0.2.2:8081$imagenPath"
         else -> "http://10.0.2.2:8081/api/actividad/imagen/$imagenPath"
+    }?.let {
+        // Agrega sufijo de tiempo para evitar caché
+        "$it?ts=${System.currentTimeMillis()}"
     }
 
     if (fullUrl != null) {
@@ -57,6 +60,7 @@ fun MostrarImagenActividadDesdePath(imagenPath: String?) {
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

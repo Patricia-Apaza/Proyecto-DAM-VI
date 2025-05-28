@@ -20,16 +20,15 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import pe.edu.upeu.systurismojpc.modelo.ActividadDto
-import pe.edu.upeu.systurismojpc.modelo.DestinoDto
-import pe.edu.upeu.systurismojpc.modelo.DestinoResp
-import pe.edu.upeu.systurismojpc.modelo.DestinoSimpleDto
+import pe.edu.upeu.systurismojpc.ui.presentation.screens.destino.DestinoViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActividadFormScreen(
     navController: NavController,
     actividadId: String?,
-    actividadViewModel: ActividadViewModel = hiltViewModel()
+    actividadViewModel: ActividadViewModel = hiltViewModel(),
+    destinoViewModel: DestinoViewModel = hiltViewModel()
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -43,7 +42,11 @@ fun ActividadFormScreen(
     var imagenPath by remember { mutableStateOf("") }
     var imagenUri by remember { mutableStateOf<Uri?>(null) }
 
-    // Lanzador para seleccionar imagen
+    var expanded by remember { mutableStateOf(false) }
+    var selectedDestinoNombre by remember { mutableStateOf("") }
+
+    val destinos by destinoViewModel.lista.collectAsState()
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -53,8 +56,11 @@ fun ActividadFormScreen(
         }
     }
 
-    // Cargar datos si es edición
-    LaunchedEffect(actividadId) {
+    LaunchedEffect(true) {
+        destinoViewModel.getDestinos()
+    }
+
+    LaunchedEffect(actividadId, destinos) {
         if (!actividadId.isNullOrBlank()) {
             val actividad = actividadViewModel.buscarActividad(actividadId.toLong())
             idDestino = actividad.idDestino?.toString() ?: ""
@@ -64,6 +70,9 @@ fun ActividadFormScreen(
             whatsappContacto = actividad.whatsappContacto ?: ""
             precio = actividad.precio?.toString() ?: ""
             imagenPath = actividad.imagenPath ?: ""
+
+            val destino = destinos.find { it.idDestino.toString() == idDestino }
+            selectedDestinoNombre = destino?.nombre ?: ""
         }
     }
 
@@ -82,12 +91,41 @@ fun ActividadFormScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            OutlinedTextField(
-                value = idDestino,
-                onValueChange = { idDestino = it },
-                label = { Text("ID Destino") },
-                modifier = Modifier.fillMaxWidth()
-            )
+            // Dropdown de destinos
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded }
+            ) {
+                OutlinedTextField(
+                    value = selectedDestinoNombre,
+                    onValueChange = {},
+                    label = { Text("Destino") },
+                    readOnly = true,
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth()
+                )
+
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    destinos.forEach { destino ->
+                        DropdownMenuItem(
+                            text = { Text(destino.nombre) },
+                            onClick = {
+                                selectedDestinoNombre = destino.nombre
+                                idDestino = destino.idDestino.toString()
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             OutlinedTextField(
                 value = nombre,
                 onValueChange = { nombre = it },
@@ -146,49 +184,60 @@ fun ActividadFormScreen(
 
             Button(
                 onClick = {
-                    val idDestinoLong = idDestino.toLongOrNull()
-                    val precioDouble = precio.toDoubleOrNull()
+                    scope.launch {
+                        val idDestinoLong = idDestino.toLongOrNull()
+                        val precioDouble = precio.toDoubleOrNull()
 
-                    if (idDestinoLong == null || precioDouble == null || nombre.isBlank()) {
-                        // Aquí puedes mostrar un mensaje de error al usuario usando un Toast, Snackbar, etc.
-                        return@Button
-                    }
+                        if (idDestinoLong == null || precioDouble == null || nombre.isBlank()) return@launch
 
-                    val actividadDto = ActividadDto(
-                        idActividad = actividadId?.toLongOrNull() ?: 0L,
-                        idDestino = idDestinoLong,
-                        nombre = nombre,
-                        descripcion = descripcion,
-                        nivelRiesgo = nivelRiesgo,
-                        whatsappContacto = whatsappContacto,
-                        precio = precioDouble,
-                        imagenPath = imagenPath
-                    )
-
-                    if (imagenUri != null) {
-                        actividadViewModel.guardarActividadConImagen(
-                            context,
-                            actividadDto.idDestino,
-                            actividadDto.nombre,
-                            actividadDto.descripcion,
-                            actividadDto.nivelRiesgo,
-                            actividadDto.whatsappContacto,
-                            actividadDto.precio,
-                            imagenUri!!
-                        ) { success ->
-                            if (success) {
-                                navController.popBackStack()
-                            } else {
-                                // Mostrar error (podrías usar un Snackbar o Toast)
-                            }
+                        // Solo para edición sin imagen nueva seleccionada
+                        if (!actividadId.isNullOrBlank() && imagenUri == null && imagenPath.isBlank()) {
+                            val actividadExistente = actividadViewModel.buscarActividad(actividadId.toLong())
+                            imagenPath = actividadExistente.imagenPath ?: ""
                         }
-                    } else {
-                        // Si no hay imagen, guardar sin imagen
-                        actividadViewModel.guardarActividad(actividadDto) { success ->
-                            if (success) {
-                                navController.popBackStack()
+
+                        val actividadDto = ActividadDto(
+                            idActividad = actividadId?.toLongOrNull() ?: 0L,
+                            idDestino = idDestinoLong,
+                            nombre = nombre,
+                            descripcion = descripcion,
+                            nivelRiesgo = nivelRiesgo,
+                            whatsappContacto = whatsappContacto,
+                            precio = precioDouble,
+                            imagenPath = imagenPath
+                        )
+
+                        if (actividadDto.idActividad > 0) {
+                            actividadViewModel.modificarActividad(actividadDto) { success ->
+                                if (success) {
+                                    actividadViewModel.getActividades() // <- Forzar actualización
+                                    navController.popBackStack()
+                                }
+                            }
+                        } else {
+                            if (imagenUri != null) {
+                                actividadViewModel.guardarActividadConImagen(
+                                    context,
+                                    actividadDto.idDestino,
+                                    actividadDto.nombre,
+                                    actividadDto.descripcion,
+                                    actividadDto.nivelRiesgo,
+                                    actividadDto.whatsappContacto,
+                                    actividadDto.precio,
+                                    imagenUri!!
+                                ) { success ->
+                                    if (success) {
+                                        actividadViewModel.getActividades()
+                                        navController.popBackStack()
+                                    }
+                                }
                             } else {
-                                // Mostrar error
+                                actividadViewModel.guardarActividad(actividadDto) { success ->
+                                    if (success) {
+                                        actividadViewModel.getActividades()
+                                        navController.popBackStack()
+                                    }
+                                }
                             }
                         }
                     }

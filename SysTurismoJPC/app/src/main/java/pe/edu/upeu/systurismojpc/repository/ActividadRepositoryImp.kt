@@ -49,7 +49,7 @@ class ActividadRepositoryImp @Inject constructor(
         whatsappContacto: String,
         precio: Double,
         imageFile: File
-    ): Boolean {
+    ): ActividadResp? {
         val requestFile = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
         val body = MultipartBody.Part.createFormData("imagen", imageFile.name, requestFile)
 
@@ -70,6 +70,6 @@ class ActividadRepositoryImp @Inject constructor(
             precioPart,
             body
         )
-        return response.isSuccessful
+        return if (response.isSuccessful) response.body() else null
     }
 }

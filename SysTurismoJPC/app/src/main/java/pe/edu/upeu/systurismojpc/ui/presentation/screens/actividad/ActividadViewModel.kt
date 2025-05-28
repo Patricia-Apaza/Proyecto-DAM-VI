@@ -66,7 +66,7 @@ class ActividadViewModel @Inject constructor(
         viewModelScope.launch {
             val file = FileUtils.getFileFromUri(context, imagenUri)
             if (file != null) {
-                val resultado = actividadRepository.insertarActividadConImagen(
+                val actividadGuardada = actividadRepository.insertarActividadConImagen(
                     idDestino,
                     nombre,
                     descripcion,
@@ -75,8 +75,10 @@ class ActividadViewModel @Inject constructor(
                     precio,
                     file
                 )
-                onResult(resultado)
-                getActividades()
+                onResult(actividadGuardada != null)
+                if (actividadGuardada != null) {
+                    getActividades()
+                }
             } else {
                 onResult(false)
             }

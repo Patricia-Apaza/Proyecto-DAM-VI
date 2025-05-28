@@ -112,7 +112,8 @@ fun MainScreen(
         Destinations.Pantalla5,
         Destinations.ClienteMainSC,
         Destinations.DestinoMainSC,
-        Destinations.ActividadMainSC
+        Destinations.ActividadMainSC,
+        Destinations.HospedajeMainSC
     )
 
     val navigationItems2 = listOf(

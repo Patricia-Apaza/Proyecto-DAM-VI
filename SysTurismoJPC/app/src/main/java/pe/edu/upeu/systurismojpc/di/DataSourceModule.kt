@@ -9,6 +9,7 @@ import okhttp3.OkHttpClient
 import pe.edu.upeu.systurismojpc.data.remote.RestActividad
 import pe.edu.upeu.systurismojpc.data.remote.RestCliente
 import pe.edu.upeu.systurismojpc.data.remote.RestDestino
+import pe.edu.upeu.systurismojpc.data.remote.RestHospedaje
 import pe.edu.upeu.systurismojpc.data.remote.RestUsuario
 import pe.edu.upeu.systurismojpc.utils.TokenUtils
 import retrofit2.Retrofit
@@ -73,4 +74,9 @@ class DataSourceModule {
         return retrofit.create(RestActividad::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun restHospedaje(retrofit: Retrofit): RestHospedaje {
+        return retrofit.create(RestHospedaje::class.java)
+    }
 }

@@ -40,7 +40,7 @@ interface RestActividad {
         @Part whatsappContacto: MultipartBody.Part,
         @Part precio: MultipartBody.Part,
         @Part imagen: MultipartBody.Part
-    ): Response<Void>
+    ): Response<ActividadResp>
 
     companion object {
         const val BASE_RUTA = "/api/actividad"

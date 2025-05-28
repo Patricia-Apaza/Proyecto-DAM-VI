@@ -10,6 +10,8 @@ import pe.edu.upeu.systurismojpc.repository.ClienteRepository
 import pe.edu.upeu.systurismojpc.repository.ClienteRepositoryImp
 import pe.edu.upeu.systurismojpc.repository.DestinoRepository
 import pe.edu.upeu.systurismojpc.repository.DestinoRepositoryImp
+import pe.edu.upeu.systurismojpc.repository.HospedajeRepository
+import pe.edu.upeu.systurismojpc.repository.HospedajeRepositoryImp
 import pe.edu.upeu.systurismojpc.repository.UsuarioRepository
 import pe.edu.upeu.systurismojpc.repository.UsuarioRepositoryImp
 import javax.inject.Singleton
@@ -42,4 +44,7 @@ abstract class RepositoryModule {
     @Singleton
     abstract fun actividadRepository(actividadRepos: ActividadRepositoryImp): ActividadRepository
 
+    @Binds
+    @Singleton
+    abstract fun hospedajeRepository(hospedajeRepos: HospedajeRepositoryImp): HospedajeRepository
 }

@@ -18,6 +18,8 @@ import pe.edu.upeu.systurismojpc.ui.presentation.screens.cliente.ClienteForm
 import pe.edu.upeu.systurismojpc.ui.presentation.screens.cliente.ClienteMain
 import pe.edu.upeu.systurismojpc.ui.presentation.screens.destino.DestinoFormScreen
 import pe.edu.upeu.systurismojpc.ui.presentation.screens.destino.DestinoMainScreen
+import pe.edu.upeu.systurismojpc.ui.presentation.screens.hospedaje.HospedajeFormScreen
+import pe.edu.upeu.systurismojpc.ui.presentation.screens.hospedaje.HospedajeMainScreen
 import pe.edu.upeu.systurismojpc.ui.presentation.screens.login.LoginScreen
 
 @Composable
@@ -83,6 +85,16 @@ fun NavigationHost(
             ActividadFormScreen(navController = navController, actividadId = actividadId)
         }
 
+        composable(Destinations.HospedajeMainSC.route) {
+            HospedajeMainScreen(navController = navController)
+        }
 
+        composable(
+            Destinations.HospedajeFormSC.route,
+            arguments = listOf(navArgument("hospedajeId") { defaultValue = "" })
+        ) { navBackStackEntry ->
+            val hospedajeId = navBackStackEntry.arguments?.getString("hospedajeId")
+            HospedajeFormScreen(navController = navController, hospedajeId = hospedajeId)
+        }
     }
 }

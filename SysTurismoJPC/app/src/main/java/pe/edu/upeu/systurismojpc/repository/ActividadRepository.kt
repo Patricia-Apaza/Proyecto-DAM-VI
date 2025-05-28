@@ -18,5 +18,5 @@ interface ActividadRepository {
         whatsappContacto: String,
         precio: Double,
         imageFile: File
-    ): Boolean
+    ): ActividadResp?
 }
