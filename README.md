@@ -49,6 +49,7 @@ Antes de comenzar, asegúrate de tener instalado lo siguiente:
 ## Modelo de Base de Datos
 
 El sistema tiene un modelo de base de datos que incluye las siguientes entidades principales:
+
 ![image](https://github.com/user-attachments/assets/99f0896b-e343-4234-a6b2-07e5d7a2e1b8)
 
 En el cual contiene:
