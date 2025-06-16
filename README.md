@@ -45,6 +45,9 @@ Antes de comenzar, asegúrate de tener instalado lo siguiente:
 2. Abre Swagger y autentifícate con las siguientes credenciales:
    - **Usuario**: `admin@gmail.com`
    - **Contraseña**: `123456`
+3. Para iniciar sesión al iniciar la aplicación, poner las siguientes credenciales:
+   - **Usuario**: `turista@gmail.com`
+   - **Contraseña**: `Tu123456*`
 
 ## Modelo de Base de Datos
 
