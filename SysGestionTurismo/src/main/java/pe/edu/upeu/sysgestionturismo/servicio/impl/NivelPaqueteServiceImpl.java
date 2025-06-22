@@ -15,13 +15,13 @@ public class NivelPaqueteServiceImpl implements INivelPaqueteService {
     private NivelPaqueteRepository nivelPaqueteRepository;
 
     @Override
-    public NivelPaquete save(NivelPaquete nivelPaquete) {
-        return nivelPaqueteRepository.save(nivelPaquete);
+    public NivelPaquete save(NivelPaquete nivel) {
+        return nivelPaqueteRepository.save(nivel);
     }
 
     @Override
-    public NivelPaquete update(NivelPaquete nivelPaquete) {
-        return nivelPaqueteRepository.save(nivelPaquete);
+    public NivelPaquete update(NivelPaquete nivel) {
+        return nivelPaqueteRepository.save(nivel);
     }
 
     @Override

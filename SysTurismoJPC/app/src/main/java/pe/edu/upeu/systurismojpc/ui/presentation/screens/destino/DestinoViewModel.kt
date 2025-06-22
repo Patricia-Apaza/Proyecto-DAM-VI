@@ -15,7 +15,7 @@ import pe.edu.upeu.systurismojpc.utils.FileUtils
 import javax.inject.Inject
 
 @HiltViewModel
-class DestinoViewModel @Inject constructor(
+class   DestinoViewModel @Inject constructor(
     private val destinoRepository: DestinoRepository
 ) : ViewModel() {
 

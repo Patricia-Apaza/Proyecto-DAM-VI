@@ -5,6 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Entity
+@Table(name = "paquete_turistico")
 @Data
 public class PaqueteTuristico {
     @Id
@@ -21,4 +22,20 @@ public class PaqueteTuristico {
     @ManyToOne
     @JoinColumn(name = "id_destino")
     private Destino destino;
+
+    @ManyToOne
+    @JoinColumn(name = "id_nivel_paquete")
+    private NivelPaquete nivelPaquete;
+
+    @OneToMany(mappedBy = "paqueteTuristico", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PaqueteActividad> paqueteActividades;
+
+    @OneToMany(mappedBy = "paqueteTuristico", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PaqueteDestino> paqueteDestinos;
+
+    @OneToMany(mappedBy = "paqueteTuristico", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PaqueteHospedaje> paqueteHospedajes;
+
+    @OneToMany(mappedBy = "paqueteTuristico", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PaqueteRestaurante> paqueteRestaurantes;
 }
