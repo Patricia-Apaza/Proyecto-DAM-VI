@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.upeu.sysgestionturismo.dtos.UsuarioDto;
+import pe.edu.upeu.sysgestionturismo.dtos.LoginResponse; // <- AGREGAR ESTA IMPORTACIÓN
 import pe.edu.upeu.sysgestionturismo.security.JwtRequest;
 import pe.edu.upeu.sysgestionturismo.security.JwtResponse;
 import pe.edu.upeu.sysgestionturismo.security.JwtTokenUtil;
@@ -35,6 +36,7 @@ public class AuthController {
 
     @Autowired
     private IUsuarioService usuarioService;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -54,17 +56,26 @@ public class AuthController {
             // Obtener información del usuario para incluir el rol en la respuesta
             Usuario usuario = usuarioService.findByCorreo(authenticationRequest.getCorreo());
 
-            UsuarioDto response = new UsuarioDto();
-            response.setIdUsuario(usuario.getIdUsuario());
+            // Crear respuesta consistente para el frontend
+            LoginResponse response = new LoginResponse();
+            response.setMessage("Login exitoso");
             response.setCorreo(usuario.getCorreo());
-            response.setRol(usuario.getRol());
+            response.setStatus(true);
             response.setToken(token);
+            response.setRol(usuario.getRol());
 
             return ResponseEntity.ok(response);
 
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Credenciales inválidas");
+            // Devolver respuesta consistente para errores
+            LoginResponse errorResponse = new LoginResponse();
+            errorResponse.setMessage("Credenciales inválidas");
+            errorResponse.setCorreo("");
+            errorResponse.setStatus(false);
+            errorResponse.setToken("");
+            errorResponse.setRol("");
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
     }
 
