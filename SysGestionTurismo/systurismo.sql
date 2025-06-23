@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 26, 2025 at 09:37 AM
+-- Generation Time: Jun 23, 2025 at 01:51 AM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.16
 
@@ -43,11 +43,10 @@ CREATE TABLE `actividad` (
 --
 
 INSERT INTO `actividad` (`id_actividad`, `nombre`, `descripcion`, `precio`, `id_destino`, `nivel_riesgo`, `whatsapp_contacto`, `imagen_path`) VALUES
-(1, 'Paseo en Balsa - Editado', 'Nuevo recorrido', 35, 1, 'bajo', NULL, NULL),
-(2, 'Visita Cultural', 'Exploración de tradiciones y costumbres', 50, 2, 'bajo', NULL, NULL),
-(13, 'r', '', 0, 27, 'bajo', NULL, NULL),
 (14, 'Escalada', 'Subida al cerro', 100, 1, 'alto', '937453278', '/imagenes/actividades/1747953167803_escalada.jpeg'),
-(15, 'Ciclismo', 'Conocer el lugar ', 100, 1, 'Medio', '91234567', '/imagenes/actividades/1747996947129_ciclismo.jpeg');
+(15, 'Ciclismo', 'Conocer el lugar ', 100, 1, 'Medio', '91234567', '/imagenes/actividades/1747996947129_ciclismo.jpeg'),
+(16, 'Actualizado', 'bui', 20, NULL, 'bajo', '965432234', '/imagenes/actividades/1748321502411_temp_image2568476975421626905.tmp'),
+(72, 'zxectgvygyjhgy', 'gyu', 80, NULL, 'bajo', '954376598', 'content://com.google.android.apps.docs.storage/document/acc%3D1%3Bdoc%3Dencoded%3DkBEq-wcPTMBaZi0rDzh68uC_ABxPTQv2W6GJgrY5KhcULGirM8uB4XU%3D');
 
 -- --------------------------------------------------------
 
@@ -230,8 +229,8 @@ CREATE TABLE `inventario_actividad` (
 --
 
 INSERT INTO `inventario_actividad` (`id_inventario_actividad`, `id_actividad`, `nombre_actividad`, `fecha_sesion`, `hora_inicio`, `hora_fin`, `capacidad_personas`, `personas_registradas`, `cantidad_disponible`, `precio_por_persona`, `descripcion`) VALUES
-(1, 1, 'Escalada en roca - nivel avanzado', '2025-05-31', '13:00:00', '16:00:00', 15, 5, 10, 75.00, 'Sesión avanzada para escaladores con experiencia.'),
-(2, 1, 'Escalada en montaña', '2025-05-31', '13:00:00', '16:00:00', 15, 5, 10, 75.00, 'Sesión avanzada para escaladores con experiencia.');
+(1, 14, 'Escalada en roca - nivel avanzado', '2025-05-31', '13:00:00', '16:00:00', 15, 5, 10, 75.00, 'Sesión avanzada para escaladores con experiencia.'),
+(2, 15, 'Escalada en montaña', '2025-05-31', '13:00:00', '16:00:00', 15, 5, 10, 75.00, 'Sesión avanzada para escaladores con experiencia.');
 
 -- --------------------------------------------------------
 
@@ -343,6 +342,27 @@ INSERT INTO `menu_diario` (`id_menu`, `id_restaurante`, `fecha`, `nombre_plato`,
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `nivel_paquete`
+--
+
+CREATE TABLE `nivel_paquete` (
+  `id_nivel_paquete` bigint NOT NULL,
+  `nombre_nivel` varchar(50) NOT NULL,
+  `descripcion` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `nivel_paquete`
+--
+
+INSERT INTO `nivel_paquete` (`id_nivel_paquete`, `nombre_nivel`, `descripcion`) VALUES
+(1, 'Económico', 'Servicios básicos para presupuestos ajustados'),
+(2, 'Estándar', 'Experiencia media entre básica y completa'),
+(3, 'Premium', 'Servicios exclusivos y de alta calidad');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `pago`
 --
 
@@ -379,10 +399,12 @@ CREATE TABLE `paquete_actividad` (
 --
 
 INSERT INTO `paquete_actividad` (`id_paquete_actividad`, `id_paquete_turistico`, `id_actividad`) VALUES
-(1, 1, 1),
-(2, 2, 2),
-(3, 2, 1),
-(4, 1, 2);
+(1, 1, 14),
+(2, 2, 15),
+(3, 2, 14),
+(4, 1, 15),
+(6, 7, 16),
+(9, 10, 16);
 
 -- --------------------------------------------------------
 
@@ -403,7 +425,9 @@ CREATE TABLE `paquete_destino` (
 INSERT INTO `paquete_destino` (`id_paquete_destino`, `id_paquete_turistico`, `id_destino`) VALUES
 (2, 1, 1),
 (4, 1, 15),
-(5, 1, 18);
+(5, 1, 18),
+(7, 7, 27),
+(8, 10, 27);
 
 -- --------------------------------------------------------
 
@@ -423,7 +447,9 @@ CREATE TABLE `paquete_hospedaje` (
 
 INSERT INTO `paquete_hospedaje` (`id_paquete_hospedaje`, `id_paquete_turistico`, `id_hospedaje`) VALUES
 (1, 1, 2),
-(2, 1, 2);
+(2, 1, 2),
+(4, 7, 5),
+(5, 10, 5);
 
 -- --------------------------------------------------------
 
@@ -443,7 +469,9 @@ CREATE TABLE `paquete_restaurante` (
 
 INSERT INTO `paquete_restaurante` (`id_paquete_restaurante`, `id_paquete_turistico`, `id_restaurante`) VALUES
 (1, 1, 2),
-(2, 1, 2);
+(2, 1, 2),
+(4, 7, 2),
+(5, 10, 2);
 
 -- --------------------------------------------------------
 
@@ -459,6 +487,7 @@ CREATE TABLE `paquete_turistico` (
   `precio_total` double NOT NULL,
   `whatsapp_contacto` varchar(255) DEFAULT NULL,
   `imagen_path` varchar(255) DEFAULT NULL,
+  `id_nivel_paquete` bigint DEFAULT NULL,
   `id_destino` bigint DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -466,12 +495,13 @@ CREATE TABLE `paquete_turistico` (
 -- Dumping data for table `paquete_turistico`
 --
 
-INSERT INTO `paquete_turistico` (`id_paquete_turistico`, `nombre`, `descripcion`, `duracion_dias`, `precio_total`, `whatsapp_contacto`, `imagen_path`, `id_destino`) VALUES
-(1, 'Paquete Full Capachica', 'Visita completa a Capachica', 0, 200, NULL, NULL, 1),
-(2, 'Paquete Isañata Exprés', 'Tour rápido a Isla Isañata', 0, 150, NULL, NULL, 2),
-(3, 'Paquete Full Capachica', 'Visita completa a Capachica', 0, 200, NULL, NULL, 1),
-(4, 'Paquete Isañata Exprés', 'Tour rápido a Isla Isañata', 0, 150, NULL, NULL, 2),
-(5, 'Full Capachica', 'Paquete turístico completo', 5, 1500, '954375460', '1748005359419_paquete turistico.jpg', 1);
+INSERT INTO `paquete_turistico` (`id_paquete_turistico`, `nombre`, `descripcion`, `duracion_dias`, `precio_total`, `whatsapp_contacto`, `imagen_path`, `id_nivel_paquete`, `id_destino`) VALUES
+(1, 'Paquete Full Capachica', 'Visita completa a Capachica', 0, 200, NULL, NULL, NULL, NULL),
+(2, 'Paquete Isañata Exprés', 'Tour rápido a Isla Isañata', 0, 150, NULL, NULL, NULL, NULL),
+(3, 'Paquete Full Capachica', 'Visita completa a Capachica', 0, 200, NULL, NULL, NULL, NULL),
+(4, 'Paquete Isañata Exprés', 'Tour rápido a Isla Isañata', 0, 150, NULL, NULL, NULL, NULL),
+(7, 'Paquete Capchic', 'Experiencia premium', 7, 2000, '954375460', '1748448276331_paquete.jpeg', 3, 27),
+(10, 'Paquete Aventura', 'Excursión', 3, 150, '975432123', '1750575510092_paquete turistico.jpg', 2, 27);
 
 -- --------------------------------------------------------
 
@@ -734,7 +764,10 @@ CREATE TABLE `usuario` (
 
 INSERT INTO `usuario` (`id_usuario`, `correo`, `contraseña`, `rol`) VALUES
 (1, 'admin@gmail.com', '$2a$10$gYvVkg444XONkGYoFXKCq.sWqsypynXuY5uAFvac/oVZFUOzFfKWq', 'ADMIN'),
-(3, 'turista@gmail.com', '$2a$10$1/nRU/yY3xVLmdhrsoG1BuZrH6jdQhjC0//MeaY4ULtnd2xWoJTDS', 'CLIENTE');
+(3, 'turista@gmail.com', '$2a$10$1/nRU/yY3xVLmdhrsoG1BuZrH6jdQhjC0//MeaY4ULtnd2xWoJTDS', 'CLIENTE'),
+(4, 'cliente@gmail.com', '$2a$10$cjDnJIhBw.sLtR8B1pY0JedhmbjPC3sLypDU9o7FEIbuRBEIWtDzu', 'CLIENTE'),
+(5, 'renzo@gmail.com', '$2a$10$lBi6CXPSkmWr2T6u2sqKHuNqpiKV6zvlekMx1A86HRldlhd2LuZxS', 'CLIENTE'),
+(6, 'sysadmin@gmail.com', '$2a$10$E12VKHYRpbF6M4.JZJns7eH.6EF0ot.CegH5J8AddRvQNraon.2X6', 'ADMIN');
 
 --
 -- Indexes for dumped tables
@@ -823,6 +856,13 @@ ALTER TABLE `menu_diario`
   ADD KEY `menu_diario_ibfk_1` (`id_restaurante`);
 
 --
+-- Indexes for table `nivel_paquete`
+--
+ALTER TABLE `nivel_paquete`
+  ADD PRIMARY KEY (`id_nivel_paquete`),
+  ADD UNIQUE KEY `nombre_nivel` (`nombre_nivel`);
+
+--
 -- Indexes for table `pago`
 --
 ALTER TABLE `pago`
@@ -866,7 +906,8 @@ ALTER TABLE `paquete_restaurante`
 --
 ALTER TABLE `paquete_turistico`
   ADD PRIMARY KEY (`id_paquete_turistico`),
-  ADD KEY `id_destino` (`id_destino`);
+  ADD KEY `fk_paquete_nivel` (`id_nivel_paquete`),
+  ADD KEY `FKc4qn98uowfvh2awf4ukr04op0` (`id_destino`);
 
 --
 -- Indexes for table `resena`
@@ -957,7 +998,7 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT for table `actividad`
 --
 ALTER TABLE `actividad`
-  MODIFY `id_actividad` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id_actividad` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 
 --
 -- AUTO_INCREMENT for table `checkin`
@@ -987,7 +1028,7 @@ ALTER TABLE `destino`
 -- AUTO_INCREMENT for table `hospedaje`
 --
 ALTER TABLE `hospedaje`
-  MODIFY `id_hospedaje` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_hospedaje` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `inventario`
@@ -1026,6 +1067,12 @@ ALTER TABLE `menu_diario`
   MODIFY `id_menu` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `nivel_paquete`
+--
+ALTER TABLE `nivel_paquete`
+  MODIFY `id_nivel_paquete` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
 -- AUTO_INCREMENT for table `pago`
 --
 ALTER TABLE `pago`
@@ -1035,31 +1082,31 @@ ALTER TABLE `pago`
 -- AUTO_INCREMENT for table `paquete_actividad`
 --
 ALTER TABLE `paquete_actividad`
-  MODIFY `id_paquete_actividad` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_paquete_actividad` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `paquete_destino`
 --
 ALTER TABLE `paquete_destino`
-  MODIFY `id_paquete_destino` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_paquete_destino` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `paquete_hospedaje`
 --
 ALTER TABLE `paquete_hospedaje`
-  MODIFY `id_paquete_hospedaje` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_paquete_hospedaje` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `paquete_restaurante`
 --
 ALTER TABLE `paquete_restaurante`
-  MODIFY `id_paquete_restaurante` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_paquete_restaurante` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `paquete_turistico`
 --
 ALTER TABLE `paquete_turistico`
-  MODIFY `id_paquete_turistico` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_paquete_turistico` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `resena`
@@ -1119,7 +1166,7 @@ ALTER TABLE `restaurante`
 -- AUTO_INCREMENT for table `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_usuario` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
@@ -1223,7 +1270,8 @@ ALTER TABLE `paquete_restaurante`
 -- Constraints for table `paquete_turistico`
 --
 ALTER TABLE `paquete_turistico`
-  ADD CONSTRAINT `paquete_turistico_ibfk_1` FOREIGN KEY (`id_destino`) REFERENCES `destino` (`id_destino`);
+  ADD CONSTRAINT `fk_paquete_nivel` FOREIGN KEY (`id_nivel_paquete`) REFERENCES `nivel_paquete` (`id_nivel_paquete`),
+  ADD CONSTRAINT `FKc4qn98uowfvh2awf4ukr04op0` FOREIGN KEY (`id_destino`) REFERENCES `destino` (`id_destino`);
 
 --
 -- Constraints for table `resena`
