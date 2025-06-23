@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.upeu.sysgestionturismo.dtos.UsuarioDto;
 import pe.edu.upeu.sysgestionturismo.security.JwtRequest;
@@ -34,6 +35,8 @@ public class AuthController {
 
     @Autowired
     private IUsuarioService usuarioService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody JwtRequest authenticationRequest) throws Exception {
@@ -88,5 +91,12 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token inválido");
         }
+    }
+
+    @PostMapping("/registrar")
+    public String registrar(@RequestBody Usuario usuario) {
+        usuario.setContraseña(passwordEncoder.encode(usuario.getContraseña()));
+        usuarioService.save(usuario);
+        return "Usuario registrado exitosamente!";
     }
 }
