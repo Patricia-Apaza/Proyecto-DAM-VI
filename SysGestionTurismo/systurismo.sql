@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 23, 2025 at 01:51 AM
+-- Generation Time: Jun 26, 2025 at 03:42 AM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.16
 
@@ -47,6 +47,55 @@ INSERT INTO `actividad` (`id_actividad`, `nombre`, `descripcion`, `precio`, `id_
 (15, 'Ciclismo', 'Conocer el lugar ', 100, 1, 'Medio', '91234567', '/imagenes/actividades/1747996947129_ciclismo.jpeg'),
 (16, 'Actualizado', 'bui', 20, NULL, 'bajo', '965432234', '/imagenes/actividades/1748321502411_temp_image2568476975421626905.tmp'),
 (72, 'zxectgvygyjhgy', 'gyu', 80, NULL, 'bajo', '954376598', 'content://com.google.android.apps.docs.storage/document/acc%3D1%3Bdoc%3Dencoded%3DkBEq-wcPTMBaZi0rDzh68uC_ABxPTQv2W6GJgrY5KhcULGirM8uB4XU%3D');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `carrito`
+--
+
+CREATE TABLE `carrito` (
+  `id_carrito` bigint NOT NULL,
+  `id_cliente` bigint NOT NULL,
+  `fecha_creacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `estado` enum('ACTIVO','FINALIZADO') DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `carrito`
+--
+
+INSERT INTO `carrito` (`id_carrito`, `id_cliente`, `fecha_creacion`, `estado`) VALUES
+(12, 14, '2025-06-26 03:16:58', 'ACTIVO'),
+(13, 13, '2025-06-26 03:29:19', 'ACTIVO');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `carrito_item`
+--
+
+CREATE TABLE `carrito_item` (
+  `id_carrito_item` bigint NOT NULL,
+  `id_carrito` bigint NOT NULL,
+  `tipo_item` enum('ACTIVIDAD','HOSPEDAJE','MENU','RESTAURANTE','PAQUETE','DESTINO') DEFAULT NULL,
+  `id_referencia` bigint NOT NULL,
+  `cantidad` int DEFAULT '1',
+  `fecha_agregado` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `observaciones` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `carrito_item`
+--
+
+INSERT INTO `carrito_item` (`id_carrito_item`, `id_carrito`, `tipo_item`, `id_referencia`, `cantidad`, `fecha_agregado`, `observaciones`) VALUES
+(11, 12, 'ACTIVIDAD', 2, 1, '2025-06-26 03:16:58', 'Tour en bote'),
+(12, 12, 'HOSPEDAJE', 5, 2, '2025-06-26 03:17:09', 'Hotel vista al lago'),
+(13, 12, 'ACTIVIDAD', 3, 1, '2025-06-26 03:26:25', 'Caminata en los miradores'),
+(14, 12, 'HOSPEDAJE', 6, 1, '2025-06-26 03:26:38', 'Hospedaje rural con desayuno incluido'),
+(15, 13, 'ACTIVIDAD', 2, 1, '2025-06-26 03:29:19', 'Tour por la península'),
+(16, 13, 'MENU', 4, 2, '2025-06-26 03:29:33', 'Menú vegetariano para dos personas');
 
 -- --------------------------------------------------------
 
@@ -781,6 +830,20 @@ ALTER TABLE `actividad`
   ADD KEY `id_destino` (`id_destino`);
 
 --
+-- Indexes for table `carrito`
+--
+ALTER TABLE `carrito`
+  ADD PRIMARY KEY (`id_carrito`),
+  ADD KEY `id_cliente` (`id_cliente`);
+
+--
+-- Indexes for table `carrito_item`
+--
+ALTER TABLE `carrito_item`
+  ADD PRIMARY KEY (`id_carrito_item`),
+  ADD KEY `id_carrito` (`id_carrito`);
+
+--
 -- Indexes for table `checkin`
 --
 ALTER TABLE `checkin`
@@ -1001,6 +1064,18 @@ ALTER TABLE `actividad`
   MODIFY `id_actividad` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 
 --
+-- AUTO_INCREMENT for table `carrito`
+--
+ALTER TABLE `carrito`
+  MODIFY `id_carrito` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+--
+-- AUTO_INCREMENT for table `carrito_item`
+--
+ALTER TABLE `carrito_item`
+  MODIFY `id_carrito_item` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+
+--
 -- AUTO_INCREMENT for table `checkin`
 --
 ALTER TABLE `checkin`
@@ -1177,6 +1252,18 @@ ALTER TABLE `usuario`
 --
 ALTER TABLE `actividad`
   ADD CONSTRAINT `actividad_ibfk_1` FOREIGN KEY (`id_destino`) REFERENCES `destino` (`id_destino`);
+
+--
+-- Constraints for table `carrito`
+--
+ALTER TABLE `carrito`
+  ADD CONSTRAINT `carrito_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`);
+
+--
+-- Constraints for table `carrito_item`
+--
+ALTER TABLE `carrito_item`
+  ADD CONSTRAINT `carrito_item_ibfk_1` FOREIGN KEY (`id_carrito`) REFERENCES `carrito` (`id_carrito`);
 
 --
 -- Constraints for table `checkin`
