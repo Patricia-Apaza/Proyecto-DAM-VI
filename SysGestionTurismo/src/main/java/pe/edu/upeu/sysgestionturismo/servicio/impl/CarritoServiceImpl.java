@@ -24,6 +24,18 @@ public class CarritoServiceImpl implements ICarritoService {
     @Autowired
     private CarritoItemRepository carritoItemRepository;
 
+    @Autowired
+    private ActividadRepository actividadRepository;
+
+    @Autowired
+    private HospedajeRepository hospedajeRepository;
+
+    @Autowired
+    private MenuDiarioRepository menuRepository;
+
+    @Autowired
+    private PaqueteTuristicoRepository paqueteTuristicoRepository;
+
     @Override
     public CarritoDto agregarAlCarrito(AgregarCarritoDto dto) {
         Cliente cliente = clienteRepository.findById(dto.getIdCliente())
@@ -34,9 +46,6 @@ public class CarritoServiceImpl implements ICarritoService {
                     Carrito nuevo = new Carrito();
                     nuevo.setCliente(cliente);
                     nuevo.setEstado(Carrito.EstadoCarrito.ACTIVO);
-
-                    System.out.println("Estado antes de guardar: " + nuevo.getEstado());
-
                     nuevo.setItems(new ArrayList<>());
                     return carritoRepository.save(nuevo);
                 });
@@ -54,20 +63,53 @@ public class CarritoServiceImpl implements ICarritoService {
                     return nuevoItem;
                 });
 
-        item.setCantidad(item.getCantidad() + (dto.getCantidad() != null ? dto.getCantidad() : 1));
+        int cantidad = dto.getCantidad() != null ? dto.getCantidad() : 1;
+        item.setCantidad(item.getCantidad() + cantidad);
         item.setObservaciones(dto.getObservaciones());
+
+        // Buscar el precio real
+        java.math.BigDecimal precioUnitario = java.math.BigDecimal.ZERO;
+
+        switch (tipoItemEnum) {
+            case ACTIVIDAD:
+                precioUnitario = java.math.BigDecimal.valueOf(
+                        actividadRepository.findById(dto.getIdReferencia())
+                                .orElseThrow(() -> new RuntimeException("Actividad no encontrada"))
+                                .getPrecio()
+                );
+                break;
+            case HOSPEDAJE:
+                precioUnitario = java.math.BigDecimal.valueOf(
+                        hospedajeRepository.findById(dto.getIdReferencia())
+                                .orElseThrow(() -> new RuntimeException("Hospedaje no encontrado"))
+                                .getPrecioPorNoche()
+                );
+                break;
+            case MENU:
+                precioUnitario = menuRepository.findById(dto.getIdReferencia())
+                        .orElseThrow(() -> new RuntimeException("Menú no encontrado"))
+                        .getPrecio();
+                break;
+            case PAQUETE:
+                precioUnitario = java.math.BigDecimal.valueOf(
+                        paqueteTuristicoRepository.findById(dto.getIdReferencia())
+                                .orElseThrow(() -> new RuntimeException("Paquete no encontrado"))
+                                .getPrecioTotal()
+                );
+                break;
+            default:
+                throw new RuntimeException("Tipo de item no soportado");
+        }
+
+        item.setPrecioUnitario(precioUnitario);
+        item.setSubtotal(precioUnitario.multiply(java.math.BigDecimal.valueOf(item.getCantidad())));
 
         carritoItemRepository.save(item);
         carrito.getItems().add(item);
-
-        // Refrescar el carrito con los ítems actualizados
-        Carrito carritoActualizado = carritoRepository.findById(carrito.getIdCarrito())
-                .orElseThrow(() -> new RuntimeException("Error al actualizar carrito"));
 
         Carrito carritoConItems = carritoRepository.findConItemsById(carrito.getIdCarrito())
                 .orElseThrow(() -> new RuntimeException("Error al recuperar carrito con ítems"));
 
         return CarritoMapper.toDto(carritoConItems);
-
     }
 }

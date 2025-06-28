@@ -1,13 +1,13 @@
 package pe.edu.upeu.sysgestionturismo.servicio;
 
-import pe.edu.upeu.sysgestionturismo.modelo.Pago;
+import pe.edu.upeu.sysgestionturismo.dtos.CrearPagoDto;
+import pe.edu.upeu.sysgestionturismo.dtos.PagoDto;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.io.IOException;
 
 public interface IPagoService {
-    Pago save(Pago pago);
-    Pago update(Pago pago);
-    void delete(Long id);
-    Pago findById(Long id);
-    List<Pago> findAll();
+    PagoDto crearPago(CrearPagoDto request);
+    PagoDto subirComprobante(Long idPago, MultipartFile file) throws IOException;
+    PagoDto confirmarPago(Long idPago);
 }

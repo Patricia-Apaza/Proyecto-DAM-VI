@@ -2,17 +2,18 @@ package pe.edu.upeu.sysgestionturismo.dtos;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-public class CarritoItemDto {
+public class CarritoItemDetalleDto {
     private Long idCarritoItem;
-    private Long idCarrito;
     private String tipoItem;
     private Long idReferencia;
     private Integer cantidad;
+    private Double precioUnitario;
+    private Double subtotal;
     private String observaciones;
     private LocalDateTime fechaAgregado;
-    private java.math.BigDecimal precioUnitario;
-    private java.math.BigDecimal subtotal;
+    private ItemDetalleDto detalle;
 }

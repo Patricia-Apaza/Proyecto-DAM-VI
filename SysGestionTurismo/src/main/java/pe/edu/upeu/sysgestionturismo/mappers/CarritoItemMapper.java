@@ -14,6 +14,8 @@ public class CarritoItemMapper {
         dto.setCantidad(entity.getCantidad());
         dto.setObservaciones(entity.getObservaciones());
         dto.setFechaAgregado(entity.getFechaAgregado());
+        dto.setPrecioUnitario(entity.getPrecioUnitario());
+        dto.setSubtotal(entity.getSubtotal());
         return dto;
     }
 }

@@ -2,6 +2,7 @@ package pe.edu.upeu.sysgestionturismo.modelo;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.math.BigDecimal;
 
 import java.time.LocalDateTime;
 
@@ -27,6 +28,12 @@ public class CarritoItem {
     private String observaciones;
 
     private LocalDateTime fechaAgregado = LocalDateTime.now();
+
+    @Column(nullable = false)
+    private java.math.BigDecimal precioUnitario;
+
+    @Column(nullable = false)
+    private java.math.BigDecimal subtotal;
 
     public enum TipoItem {
         ACTIVIDAD,

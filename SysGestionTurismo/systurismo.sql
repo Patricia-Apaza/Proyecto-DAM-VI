@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 26, 2025 at 03:42 AM
+-- Generation Time: Jun 28, 2025 at 02:27 PM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.16
 
@@ -67,7 +67,8 @@ CREATE TABLE `carrito` (
 
 INSERT INTO `carrito` (`id_carrito`, `id_cliente`, `fecha_creacion`, `estado`) VALUES
 (12, 14, '2025-06-26 03:16:58', 'ACTIVO'),
-(13, 13, '2025-06-26 03:29:19', 'ACTIVO');
+(13, 13, '2025-06-26 03:29:19', 'ACTIVO'),
+(14, 11, '2025-06-28 13:29:59', 'ACTIVO');
 
 -- --------------------------------------------------------
 
@@ -82,20 +83,27 @@ CREATE TABLE `carrito_item` (
   `id_referencia` bigint NOT NULL,
   `cantidad` int DEFAULT '1',
   `fecha_agregado` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `observaciones` varchar(255) DEFAULT NULL
+  `observaciones` varchar(255) DEFAULT NULL,
+  `precio_unitario` decimal(38,2) NOT NULL,
+  `subtotal` decimal(38,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `carrito_item`
 --
 
-INSERT INTO `carrito_item` (`id_carrito_item`, `id_carrito`, `tipo_item`, `id_referencia`, `cantidad`, `fecha_agregado`, `observaciones`) VALUES
-(11, 12, 'ACTIVIDAD', 2, 1, '2025-06-26 03:16:58', 'Tour en bote'),
-(12, 12, 'HOSPEDAJE', 5, 2, '2025-06-26 03:17:09', 'Hotel vista al lago'),
-(13, 12, 'ACTIVIDAD', 3, 1, '2025-06-26 03:26:25', 'Caminata en los miradores'),
-(14, 12, 'HOSPEDAJE', 6, 1, '2025-06-26 03:26:38', 'Hospedaje rural con desayuno incluido'),
-(15, 13, 'ACTIVIDAD', 2, 1, '2025-06-26 03:29:19', 'Tour por la península'),
-(16, 13, 'MENU', 4, 2, '2025-06-26 03:29:33', 'Menú vegetariano para dos personas');
+INSERT INTO `carrito_item` (`id_carrito_item`, `id_carrito`, `tipo_item`, `id_referencia`, `cantidad`, `fecha_agregado`, `observaciones`, `precio_unitario`, `subtotal`) VALUES
+(11, 12, 'ACTIVIDAD', 2, 1, '2025-06-26 03:16:58', 'Tour en bote', 0.00, 0.00),
+(12, 12, 'HOSPEDAJE', 5, 2, '2025-06-26 03:17:09', 'Hotel vista al lago', 0.00, 0.00),
+(13, 12, 'ACTIVIDAD', 3, 1, '2025-06-26 03:26:25', 'Caminata en los miradores', 0.00, 0.00),
+(14, 12, 'HOSPEDAJE', 6, 1, '2025-06-26 03:26:38', 'Hospedaje rural con desayuno incluido', 0.00, 0.00),
+(15, 13, 'ACTIVIDAD', 2, 1, '2025-06-26 03:29:19', 'Tour por la península', 0.00, 0.00),
+(16, 13, 'MENU', 4, 2, '2025-06-26 03:29:33', 'Menú vegetariano para dos personas', 0.00, 0.00),
+(17, 12, 'ACTIVIDAD', 14, 1, '2025-06-28 13:25:38', 'Primera actividad en el carrito', 100.00, 100.00),
+(18, 14, 'ACTIVIDAD', 14, 1, '2025-06-28 13:30:00', 'Primera actividad en el carrito', 100.00, 100.00),
+(19, 14, 'HOSPEDAJE', 5, 2, '2025-06-28 13:32:59', 'Hospedaje frente al lago', 80.00, 160.00),
+(20, 14, 'MENU', 1, 3, '2025-06-28 13:52:35', 'Menú vegetariano', 20.00, 60.00),
+(21, 14, 'PAQUETE', 1, 1, '2025-06-28 13:52:58', 'Paquete aventura', 200.00, 200.00);
 
 -- --------------------------------------------------------
 
@@ -417,19 +425,26 @@ INSERT INTO `nivel_paquete` (`id_nivel_paquete`, `nombre_nivel`, `descripcion`) 
 
 CREATE TABLE `pago` (
   `id_pago` bigint NOT NULL,
-  `monto` double DEFAULT NULL,
+  `id_carrito` bigint NOT NULL,
   `metodo_pago` varchar(255) DEFAULT NULL,
-  `fecha_pago` timestamp NULL DEFAULT NULL,
-  `id_reserva` bigint DEFAULT NULL
+  `moneda` varchar(255) DEFAULT NULL,
+  `monto_original` decimal(38,2) DEFAULT NULL,
+  `monto_convertido` decimal(38,2) DEFAULT NULL,
+  `tasa_cambio` decimal(38,2) DEFAULT NULL,
+  `estado` enum('PENDIENTE','CONFIRMADO','CANCELADO','RECHAZADO') DEFAULT 'PENDIENTE',
+  `fecha_creacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `fecha_confirmacion` timestamp NULL DEFAULT NULL,
+  `ruta_comprobante` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `pago`
 --
 
-INSERT INTO `pago` (`id_pago`, `monto`, `metodo_pago`, `fecha_pago`, `id_reserva`) VALUES
-(1, 200, 'VISA', '2025-04-30 10:39:18', 1),
-(2, 150, 'Transferencia', '2025-04-30 10:39:18', 2);
+INSERT INTO `pago` (`id_pago`, `id_carrito`, `metodo_pago`, `moneda`, `monto_original`, `monto_convertido`, `tasa_cambio`, `estado`, `fecha_creacion`, `fecha_confirmacion`, `ruta_comprobante`) VALUES
+(1, 12, 'YAPE', 'PEN', 250.00, 250.00, 1.00, 'CONFIRMADO', '2025-06-28 12:06:00', '2025-06-28 12:20:35', '/uploads/comprobantes/1751112752874_comprobante.jpg'),
+(2, 13, 'TARJETA', 'USD', 42.12, 150.00, 0.28, 'CONFIRMADO', '2025-06-28 12:18:11', '2025-06-28 12:21:06', '/uploads/comprobantes/1751113224874_comprobante.jpg'),
+(3, 14, 'TARJETA', 'USD', 146.02, 520.00, 0.28, 'CONFIRMADO', '2025-06-28 14:24:16', '2025-06-28 14:26:18', '/uploads/comprobantes/1751120760953_comprobante.jpg');
 
 -- --------------------------------------------------------
 
@@ -930,7 +945,7 @@ ALTER TABLE `nivel_paquete`
 --
 ALTER TABLE `pago`
   ADD PRIMARY KEY (`id_pago`),
-  ADD KEY `id_reserva` (`id_reserva`);
+  ADD KEY `id_carrito` (`id_carrito`);
 
 --
 -- Indexes for table `paquete_actividad`
@@ -1067,13 +1082,13 @@ ALTER TABLE `actividad`
 -- AUTO_INCREMENT for table `carrito`
 --
 ALTER TABLE `carrito`
-  MODIFY `id_carrito` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id_carrito` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `carrito_item`
 --
 ALTER TABLE `carrito_item`
-  MODIFY `id_carrito_item` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id_carrito_item` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `checkin`
@@ -1151,7 +1166,7 @@ ALTER TABLE `nivel_paquete`
 -- AUTO_INCREMENT for table `pago`
 --
 ALTER TABLE `pago`
-  MODIFY `id_pago` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_pago` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `paquete_actividad`
@@ -1323,7 +1338,7 @@ ALTER TABLE `menu_diario`
 -- Constraints for table `pago`
 --
 ALTER TABLE `pago`
-  ADD CONSTRAINT `pago_ibfk_1` FOREIGN KEY (`id_reserva`) REFERENCES `reserva` (`id_reserva`);
+  ADD CONSTRAINT `pago_ibfk_1` FOREIGN KEY (`id_carrito`) REFERENCES `carrito` (`id_carrito`);
 
 --
 -- Constraints for table `paquete_actividad`

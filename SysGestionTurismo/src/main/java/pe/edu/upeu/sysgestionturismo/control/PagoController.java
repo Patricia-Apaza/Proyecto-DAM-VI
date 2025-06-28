@@ -1,42 +1,33 @@
 package pe.edu.upeu.sysgestionturismo.control;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pe.edu.upeu.sysgestionturismo.modelo.Pago;
+import org.springframework.web.multipart.MultipartFile;
+import pe.edu.upeu.sysgestionturismo.dtos.CrearPagoDto;
+import pe.edu.upeu.sysgestionturismo.dtos.PagoDto;
 import pe.edu.upeu.sysgestionturismo.servicio.IPagoService;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/pago")
+@RequestMapping("/api/pagos")
 @CrossOrigin(origins = "*")
 public class PagoController {
 
     @Autowired
     private IPagoService pagoService;
 
-    @GetMapping("/listar")
-    public List<Pago> listar() {
-        return pagoService.findAll();
+    @PostMapping("/crear")
+    public ResponseEntity<PagoDto> crear(@RequestBody CrearPagoDto request) {
+        return ResponseEntity.ok(pagoService.crearPago(request));
     }
 
-    @PostMapping("/guardar")
-    public Pago guardar(@RequestBody Pago pago) {
-        return pagoService.save(pago);
+    @PostMapping("/{id}/comprobante")
+    public ResponseEntity<PagoDto> subirComprobante(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws Exception {
+        return ResponseEntity.ok(pagoService.subirComprobante(id, file));
     }
 
-    @PutMapping("/editar")
-    public Pago editar(@RequestBody Pago pago) {
-        return pagoService.update(pago);
-    }
-
-    @DeleteMapping("/eliminar/{id}")
-    public void eliminar(@PathVariable Long id) {
-        pagoService.delete(id);
-    }
-
-    @GetMapping("/buscar/{id}")
-    public Pago buscar(@PathVariable Long id) {
-        return pagoService.findById(id);
+    @PostMapping("/{id}/confirmar")
+    public ResponseEntity<PagoDto> confirmar(@PathVariable Long id) {
+        return ResponseEntity.ok(pagoService.confirmarPago(id));
     }
 }

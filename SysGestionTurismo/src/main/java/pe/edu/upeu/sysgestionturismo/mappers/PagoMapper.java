@@ -2,31 +2,22 @@ package pe.edu.upeu.sysgestionturismo.mappers;
 
 import pe.edu.upeu.sysgestionturismo.dtos.PagoDto;
 import pe.edu.upeu.sysgestionturismo.modelo.Pago;
-import pe.edu.upeu.sysgestionturismo.modelo.Reserva;
 
 public class PagoMapper {
-    public static PagoDto toDto(Pago pago) {
+
+    public static PagoDto toDto(Pago entity) {
         PagoDto dto = new PagoDto();
-        dto.setIdPago(pago.getIdPago());
-        dto.setMonto(pago.getMonto());
-        dto.setMetodoPago(pago.getMetodoPago());
-        dto.setFechaPago(pago.getFechaPago());
-        dto.setIdReserva(pago.getReserva() != null ? pago.getReserva().getIdReserva() : null);
+        dto.setIdPago(entity.getIdPago());
+        dto.setIdCarrito(entity.getCarrito() != null ? entity.getCarrito().getIdCarrito() : null);
+        dto.setMontoOriginal(entity.getMontoOriginal());
+        dto.setMontoConvertido(entity.getMontoConvertido());
+        dto.setMoneda(entity.getMoneda());
+        dto.setTasaCambio(entity.getTasaCambio());
+        dto.setMetodoPago(entity.getMetodoPago());
+        dto.setRutaComprobante(entity.getRutaComprobante());
+        dto.setEstado(entity.getEstado().name());
+        dto.setFechaCreacion(entity.getFechaCreacion());
+        dto.setFechaConfirmacion(entity.getFechaConfirmacion());
         return dto;
-    }
-
-    public static Pago toEntity(PagoDto dto) {
-        Pago pago = new Pago();
-        pago.setIdPago(dto.getIdPago());
-        pago.setMonto(dto.getMonto());
-        pago.setMetodoPago(dto.getMetodoPago());
-        pago.setFechaPago(dto.getFechaPago());
-
-        if (dto.getIdReserva() != null) {
-            Reserva reserva = new Reserva();
-            reserva.setIdReserva(dto.getIdReserva());
-            pago.setReserva(reserva);
-        }
-        return pago;
     }
 }
