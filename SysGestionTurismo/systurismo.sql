@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 28, 2025 at 02:27 PM
+-- Generation Time: Jun 29, 2025 at 08:28 PM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.16
 
@@ -56,19 +56,22 @@ INSERT INTO `actividad` (`id_actividad`, `nombre`, `descripcion`, `precio`, `id_
 
 CREATE TABLE `carrito` (
   `id_carrito` bigint NOT NULL,
-  `id_cliente` bigint NOT NULL,
+  `id_cliente` bigint DEFAULT NULL,
   `fecha_creacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `estado` enum('ACTIVO','FINALIZADO') DEFAULT NULL
+  `estado` enum('ACTIVO','FINALIZADO') DEFAULT NULL,
+  `id_usuario` bigint DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `carrito`
 --
 
-INSERT INTO `carrito` (`id_carrito`, `id_cliente`, `fecha_creacion`, `estado`) VALUES
-(12, 14, '2025-06-26 03:16:58', 'ACTIVO'),
-(13, 13, '2025-06-26 03:29:19', 'ACTIVO'),
-(14, 11, '2025-06-28 13:29:59', 'ACTIVO');
+INSERT INTO `carrito` (`id_carrito`, `id_cliente`, `fecha_creacion`, `estado`, `id_usuario`) VALUES
+(12, 14, '2025-06-26 03:16:58', 'ACTIVO', NULL),
+(13, 13, '2025-06-26 03:29:19', 'ACTIVO', NULL),
+(14, 11, '2025-06-28 13:29:59', 'ACTIVO', NULL),
+(15, 12, '2025-06-28 21:05:13', 'ACTIVO', NULL),
+(16, NULL, '2025-06-29 20:26:09', 'ACTIVO', 4);
 
 -- --------------------------------------------------------
 
@@ -103,7 +106,11 @@ INSERT INTO `carrito_item` (`id_carrito_item`, `id_carrito`, `tipo_item`, `id_re
 (18, 14, 'ACTIVIDAD', 14, 1, '2025-06-28 13:30:00', 'Primera actividad en el carrito', 100.00, 100.00),
 (19, 14, 'HOSPEDAJE', 5, 2, '2025-06-28 13:32:59', 'Hospedaje frente al lago', 80.00, 160.00),
 (20, 14, 'MENU', 1, 3, '2025-06-28 13:52:35', 'Menú vegetariano', 20.00, 60.00),
-(21, 14, 'PAQUETE', 1, 1, '2025-06-28 13:52:58', 'Paquete aventura', 200.00, 200.00);
+(21, 14, 'PAQUETE', 1, 1, '2025-06-28 13:52:58', 'Paquete aventura', 200.00, 200.00),
+(22, 15, 'PAQUETE', 1, 1, '2025-06-28 21:05:13', 'Paquete aventura', 200.00, 200.00),
+(23, 15, 'HOSPEDAJE', 5, 1, '2025-06-28 21:06:04', 'Hospedaje adicional', 80.00, 80.00),
+(24, 16, 'MENU', 1, 2, '2025-06-29 20:26:09', 'Pedido del cliente', 20.00, 40.00),
+(25, 16, 'HOSPEDAJE', 1, 2, '2025-06-29 20:26:34', 'Dos noches', 100.00, 200.00);
 
 -- --------------------------------------------------------
 
@@ -849,7 +856,8 @@ ALTER TABLE `actividad`
 --
 ALTER TABLE `carrito`
   ADD PRIMARY KEY (`id_carrito`),
-  ADD KEY `id_cliente` (`id_cliente`);
+  ADD KEY `id_cliente` (`id_cliente`),
+  ADD KEY `FKsbqpxk63xrpyck17xawl195dt` (`id_usuario`);
 
 --
 -- Indexes for table `carrito_item`
@@ -1082,13 +1090,13 @@ ALTER TABLE `actividad`
 -- AUTO_INCREMENT for table `carrito`
 --
 ALTER TABLE `carrito`
-  MODIFY `id_carrito` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id_carrito` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `carrito_item`
 --
 ALTER TABLE `carrito_item`
-  MODIFY `id_carrito_item` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id_carrito_item` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `checkin`
@@ -1272,7 +1280,8 @@ ALTER TABLE `actividad`
 -- Constraints for table `carrito`
 --
 ALTER TABLE `carrito`
-  ADD CONSTRAINT `carrito_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`);
+  ADD CONSTRAINT `carrito_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`),
+  ADD CONSTRAINT `FKsbqpxk63xrpyck17xawl195dt` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`);
 
 --
 -- Constraints for table `carrito_item`

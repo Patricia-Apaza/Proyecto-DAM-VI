@@ -35,20 +35,45 @@ public class CarritoServiceImpl implements ICarritoService {
 
     @Autowired
     private PaqueteTuristicoRepository paqueteTuristicoRepository;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @Override
     public CarritoDto agregarAlCarrito(AgregarCarritoDto dto) {
-        Cliente cliente = clienteRepository.findById(dto.getIdCliente())
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+        Carrito carrito;
 
-        Carrito carrito = carritoRepository.findByClienteAndEstado(cliente, Carrito.EstadoCarrito.ACTIVO)
-                .orElseGet(() -> {
-                    Carrito nuevo = new Carrito();
-                    nuevo.setCliente(cliente);
-                    nuevo.setEstado(Carrito.EstadoCarrito.ACTIVO);
-                    nuevo.setItems(new ArrayList<>());
-                    return carritoRepository.save(nuevo);
-                });
+        if (dto.getIdCliente() != null) {
+            Cliente cliente = clienteRepository.findById(dto.getIdCliente())
+                    .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+
+            carrito = carritoRepository.findByClienteAndEstado(cliente, Carrito.EstadoCarrito.ACTIVO)
+                    .orElseGet(() -> {
+                        Carrito nuevo = new Carrito();
+                        nuevo.setCliente(cliente);
+                        nuevo.setEstado(Carrito.EstadoCarrito.ACTIVO);
+                        nuevo.setItems(new ArrayList<>());
+                        return carritoRepository.save(nuevo);
+                    });
+        } else if (dto.getIdUsuario() != null) {
+            Usuario usuario = usuarioRepository.findById(dto.getIdUsuario())
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            // Aquí puedes validar el rol
+            if (!"CLIENTE".equalsIgnoreCase(usuario.getRol())) {
+                throw new RuntimeException("Este usuario no tiene rol CLIENTE y no puede crear un carrito.");
+            }
+
+            carrito = carritoRepository.findByUsuarioAndEstado(usuario, Carrito.EstadoCarrito.ACTIVO)
+                    .orElseGet(() -> {
+                        Carrito nuevo = new Carrito();
+                        nuevo.setUsuario(usuario);
+                        nuevo.setEstado(Carrito.EstadoCarrito.ACTIVO);
+                        nuevo.setItems(new ArrayList<>());
+                        return carritoRepository.save(nuevo);
+                    });
+        } else {
+            throw new RuntimeException("Debe especificar idCliente o idUsuario.");
+        }
 
         CarritoItem.TipoItem tipoItemEnum = CarritoItem.TipoItem.valueOf(dto.getTipoItem().toUpperCase());
 
@@ -67,7 +92,6 @@ public class CarritoServiceImpl implements ICarritoService {
         item.setCantidad(item.getCantidad() + cantidad);
         item.setObservaciones(dto.getObservaciones());
 
-        // Buscar el precio real
         java.math.BigDecimal precioUnitario = java.math.BigDecimal.ZERO;
 
         switch (tipoItemEnum) {

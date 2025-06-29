@@ -18,6 +18,10 @@ public class Carrito {
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 
+    @ManyToOne
+    @JoinColumn(name = "id_usuario")
+    private Usuario usuario;
+
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
@@ -30,15 +34,10 @@ public class Carrito {
         ACTIVO, FINALIZADO
     }
 
-    public Carrito() {
-        this.estado = EstadoCarrito.ACTIVO;
-    }
-
     @PrePersist
     public void prePersist() {
-        if (estado == null || !estado.name().equals("ACTIVO") && !estado.name().equals("FINALIZADO")) {
+        if (estado == null || (!estado.equals(EstadoCarrito.ACTIVO) && !estado.equals(EstadoCarrito.FINALIZADO))) {
             this.estado = EstadoCarrito.ACTIVO;
         }
     }
-
 }

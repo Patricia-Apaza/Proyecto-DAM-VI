@@ -5,7 +5,8 @@ import lombok.Data;
 @Data
 public class AgregarCarritoDto {
     private Long idCliente;
-    private String tipoItem; // "actividad", "menu", "restaurante", etc.
+    private Long idUsuario;
+    private String tipoItem;
     private Long idReferencia;
     private Integer cantidad;
     private String observaciones;
